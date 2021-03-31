@@ -11,17 +11,27 @@ local fps = 0
 function love.load()
   print("love.load")
 
-  love.window.setFullscreen(true)
-
   local screen_width, screen_height = love.graphics.getDimensions()
-  if screen_width < screen_height then
-    WIDTH = MIN_WIDTH
-    HEIGHT = math.ceil(screen_height / screen_width * MIN_WIDTH)
-    CANVAS_SCALE = screen_width / MIN_WIDTH / SCALE
+  local screen_aspect = screen_width / screen_height
+
+  if screen_aspect < GAME_ASPECT then
+    -- less widescreen, means width is dominant and we need letterboxes
+    CANVAS_SCALE = screen_width / WIDTH / SCALE
+    SCISSOR = {
+      x=0,
+      y=(screen_height - p2s(HEIGHT)) / 2,
+      width=p2s(WIDTH),
+      height=p2s(HEIGHT),
+    }
   else
-    HEIGHT = MIN_HEIGHT
-    WIDTH = math.ceil(screen_width / screen_height * MIN_HEIGHT)
-    CANVAS_SCALE = screen_height / MIN_HEIGHT / SCALE
+    -- more widescreen, means height is dominant and we need pillarboxes
+    CANVAS_SCALE = screen_height / HEIGHT / SCALE
+    SCISSOR = {
+      x=(screen_width - p2s(WIDTH)) / 2,
+      y=0,
+      width=p2s(WIDTH),
+      height=p2s(HEIGHT),
+    }
   end
 
   canvas = love.graphics.newCanvas(WIDTH * SCALE, HEIGHT * SCALE)
@@ -30,6 +40,7 @@ function love.load()
   print("canvas:  " .. WIDTH .. " x " .. HEIGHT)
   print("scale:   " .. SCALE)
   print("c scale: " .. CANVAS_SCALE)
+  print("scissor: " .. SCISSOR.width .. " x " .. SCISSOR.height .. " @ " .. SCISSOR.x .. ", " .. SCISSOR.y)
 
   love.graphics.setDefaultFilter("nearest", "nearest")
   love.graphics.setLineStyle("rough")
@@ -40,14 +51,16 @@ function love.load()
 end
 
 function love.draw()
-  love.graphics.setCanvas(canvas)
+  love.graphics.clear(0, 0, 0)
+  love.graphics.setScissor(SCISSOR.x, SCISSOR.y, SCISSOR.width, SCISSOR.height)
+  love.graphics.translate(SCISSOR.x, SCISSOR.y)
+  love.graphics.scale(CANVAS_SCALE, CANVAS_SCALE)
 
   ENGINE:ctl("draw")
 
   love.graphics.print("fps " .. math.floor(fps + 0.5), 0, 0)
 
-  love.graphics.setCanvas()
-  love.graphics.draw(canvas, 0, 0, 0, CANVAS_SCALE, CANVAS_SCALE)
+  love.graphics.setScissor()
 end
 
 function love.update(dt, ...)
