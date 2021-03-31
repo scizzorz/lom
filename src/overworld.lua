@@ -7,9 +7,7 @@ print("Overworld.__call = " .. tostring(Overworld.__call))
 print("State.__call = " .. tostring(State.__call))
 print("Object.__call = " .. tostring(Object.__call))
 
-function Overworld:init(engine)
-  self.engine = engine
-
+function Overworld:init()
   local map_size = 240
   local tile_size = 16
   local map_width = math.ceil(WIDTH / tile_size) + 2

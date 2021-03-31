@@ -77,38 +77,6 @@ function Engine:replace_state(to)
   to:start()
 end
 
-function Engine:add_control(control)
-  table.insert(self.controls, control)
-  if control.add then
-    control:add(self)
-  end
-end
-
-function Engine:rm_control(control)
-  for key, val in ipairs(self.controls) do
-    if val == control then
-      table.remove(self.controls, key)
-      if control.drop then
-        control:drop(self)
-      end
-      break
-    end
-  end
-end
-
-function Engine:add_sprite(sprite)
-  table.insert(self.sprites, sprite)
-end
-
-function Engine:rm_sprite(sprite)
-  for key, val in ipairs(self.sprites) do
-    if val == sprite then
-      table.remove(self.sprites, key)
-      break
-    end
-  end
-end
-
 function Engine:ctl(event, ...)
   for i, state in ipairs(self.states) do
     state[event](state, i == #self.states, ...)

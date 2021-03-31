@@ -33,15 +33,8 @@ function love.load()
   love.graphics.setLineStyle('rough')
 
   ENGINE = Engine()
-  OVERWORLD = Overworld(ENGINE)
-
+  OVERWORLD = Overworld()
   ENGINE:push_state(OVERWORLD)
-
-  ENGINE:add_sprite(map)
-  ENGINE:add_sprite(bare)
-  ENGINE:add_sprite(socket)
-  ENGINE:add_sprite(knob)
-
 end
 
 function love.draw()
