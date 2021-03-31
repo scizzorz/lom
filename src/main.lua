@@ -11,6 +11,8 @@ local fps = 0
 function love.load()
   print("love.load")
 
+  love.window.setFullscreen(true)
+
   local screen_width, screen_height = love.graphics.getDimensions()
   if screen_width < screen_height then
     WIDTH = MIN_WIDTH
@@ -63,4 +65,12 @@ end
 
 function love.mousemoved(...)
   ENGINE:ctl("mousemoved", ...)
+end
+
+function love.keypressed(key)
+  if key == "r" and love.keyboard.isDown("lctrl") then
+    love.event.quit("restart")
+  elseif key == "escape" then
+    love.event.quit()
+  end
 end
