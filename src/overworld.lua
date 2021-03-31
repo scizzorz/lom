@@ -1,5 +1,6 @@
 require("sprite")
 require("world")
+require("util")
 
 Overworld = State:extend()
 
@@ -13,6 +14,8 @@ function Overworld:init()
   self.bare.x = WIDTH / 2 - 8
   self.bare.y = HEIGHT / 2 - 8
 
+  self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
+
   self.map = World("map", map_width, map_height, map_size)
   self.map.x = -WIDTH / 2
   self.map.y = -HEIGHT / 2
@@ -21,6 +24,7 @@ end
 function Overworld:update(top, dt)
   self.map:update()
 
+  -- handle movement
   local ds = dt * 60
   local dx = 0
   local dy = 0
@@ -39,6 +43,7 @@ function Overworld:update(top, dt)
     dy = dy + 1
   end
 
+  -- diagonal movement should be slower
   if dx ~= 0 and dy ~= 0 then
     ds = ds / math.sqrt(2)
   end
@@ -46,11 +51,22 @@ function Overworld:update(top, dt)
   if dx ~= 0 or dy ~= 0 then
     self:move(dx * ds, dy * ds)
   end
+
+  -- scaling mouse coordinates is annoying
+  local mx, my = love.mouse.getPosition()
+  mx = s2p(mx - SCISSOR.x)
+  my = s2p(my - SCISSOR.y)
+
+  -- finding bare center is annoying
+  self.aiming.x = self.bare.x + 8
+  self.aiming.y = self.bare.y + 8
+  self.aiming.angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my) + math.pi / 2
 end
 
 function Overworld:draw(top)
   self.map:draw()
   self.bare:draw()
+  self.aiming:draw()
 end
 
 function Overworld:move(x, y)
