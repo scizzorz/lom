@@ -16,8 +16,6 @@ function Overworld:init()
   self.map = world.new("map", map_width, map_height, map_size)
   self.map.x = -WIDTH / 2
   self.map.y = -HEIGHT / 2
-
-  self.preseed = false
 end
 
 function Overworld:update(top, dt)
@@ -55,12 +53,6 @@ function Overworld:draw(top)
   self.bare:draw()
 end
 
-function Overworld:mousepressed(top, x, y, button)
-end
-
-function Overworld:mousereleased(top, x, y, button)
-end
-
 function Overworld:move(x, y)
   local hspace = WIDTH / 3
   local vspace = HEIGHT / 3
@@ -69,8 +61,8 @@ function Overworld:move(x, y)
   self.bare.x = self.bare.x + x
   self.bare.y = self.bare.y + y
 
-  -- lock the bare within the center third of the screen by scrolling the
-  -- map inversely with the bare when he steps over the edge
+  -- lock the bare within the center third of the screen by scrolling the map
+  -- inversely with the bare when he steps over the edge
 
   if self.bare.x < hspace then
     self.map.x = self.map.x - (self.bare.x - hspace)
