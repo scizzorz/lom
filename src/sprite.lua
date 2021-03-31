@@ -31,10 +31,36 @@ function Sprite:draw()
   end
 end
 
+Card = Object:extend()
+
+function Card:init(tex)
+  self.x = 0
+  self.y = 0
+  self.tx = 0
+  self.w = 30
+  self.h = 42
+  self.ty = 0
+  self.ox = 15
+  self.oy = 21
+  self.angle = 0
+  self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
+  self.tex = load_gfx(tex)
+end
+
+function Card:update()
+  self.x = self.x + (self.tx - self.x) / 4
+  self.y = self.y + (self.ty - self.y) / 4
+end
+
+function Card:draw()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
+end
+
 Aiming = Object:extend()
 
 function Aiming:init(tex, w, h, ox, oy)
-  self.gfx = load_gfx(tex)
+  self.tex = load_gfx(tex)
   self.w = w
   self.h = h
   self.ox = ox
@@ -47,5 +73,5 @@ end
 
 function Aiming:draw()
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(self.gfx, self.quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
+  love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 end
