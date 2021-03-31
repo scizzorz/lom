@@ -32,6 +32,7 @@ function Object:extend()
   return setmetatable(proto, self)
 end
 
+
 -- state machine
 State = Object:extend()
 
@@ -52,8 +53,6 @@ function State:resume() end
 Engine = Object:extend()
 
 function Engine:init()
-  self.sprites = {}
-  self.controls = {}
   self.states = {}
 end
 
