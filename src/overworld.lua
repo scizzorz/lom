@@ -32,7 +32,7 @@ function Overworld:init()
   for i, card in ipairs(self.hand) do
     card.x = WIDTH / 2
     card.y = HEIGHT + card.h
-    card.tx = WIDTH / 2 - 22 * (#self.hand - 1) + 44 * (i - 1)
+    card.tx = WIDTH / 2 - 17 * (#self.hand - 1) + 34 * (i - 1)
     card.ty = HEIGHT
   end
 
@@ -46,8 +46,9 @@ function Overworld:update(top, dt)
     if i == self.card_sel then
       card.ty = HEIGHT - card.h / 4
     else
-      card.ty = HEIGHT
+      card.ty = HEIGHT + card.h / 6
     end
+    card.angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * 4) + math.pi / 2
     card:update()
   end
 
