@@ -1,4 +1,5 @@
 function love.conf(t)
+  t.version = "11.3"
   t.window.width = 1200
   t.window.height = 675
   t.window.title = "Heroes of Might & Mango"
