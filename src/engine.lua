@@ -79,7 +79,9 @@ end
 
 function Engine:ctl(event, ...)
   for i, state in ipairs(self.states) do
-    state[event](state, i == #self.states, ...)
+    if state[event] ~= nil then
+      state[event](state, i == #self.states, ...)
+    end
   end
 end
 
