@@ -27,8 +27,30 @@ end
 function Overworld:update(top, dt)
   self.map:update()
 
-  if self.pressed then
-    self:move(1, 0)
+  local dx = 0
+  local dy = 0
+
+  if love.keyboard.isDown("a") then
+    dx = dx - 1
+  end
+  if love.keyboard.isDown("d") then
+    dx = dx + 1
+  end
+
+  if love.keyboard.isDown("w") then
+    dy = dy - 1
+  end
+  if love.keyboard.isDown("s") then
+    dy = dy + 1
+  end
+
+  if dx ~= 0 and dy ~= 0 then
+    dx = dx / math.sqrt(2)
+    dy = dy / math.sqrt(2)
+  end
+
+  if dx ~= 0 or dy ~= 0 then
+    self:move(dx, dy)
   end
 end
 
@@ -37,15 +59,10 @@ function Overworld:draw(top)
   self.bare:draw()
 end
 
-function Overworld:mousepressed(top, x, y)
-  self.pressed = true
+function Overworld:mousepressed(top, x, y, button)
 end
 
-function Overworld:mousereleased(top, x, y)
-  self.pressed = false
-end
-
-function Overworld:mousemoved(top, x, y, dx, dy)
+function Overworld:mousereleased(top, x, y, button)
 end
 
 function Overworld:move(x, y)
