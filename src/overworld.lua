@@ -13,7 +13,7 @@ function Overworld:init()
   self.bare.x = WIDTH / 2 - 8
   self.bare.y = HEIGHT / 2 - 8
 
-  self.map = world.new("map", map_width, map_height, map_size)
+  self.map = World("map", map_width, map_height, map_size)
   self.map.x = -WIDTH / 2
   self.map.y = -HEIGHT / 2
 end

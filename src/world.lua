@@ -1,4 +1,5 @@
 require('conf')
+require('engine')
 require('gfx')
 require('util')
 
@@ -10,22 +11,15 @@ local TREE_OCTAVE = 30
 local TREE_THRESH = 0.05
 local DIRT_THRESH = 0.06
 
-world = {}
-local world_mt = {__index = world}
+World = Object:extend()
 
-world.GRASS = 0
-world.DIRT = 1
-world.BLOCK = 2
-world.EDGE = 3
-world.NUM_TILES = 4
+World.GRASS = 0
+World.DIRT = 1
+World.BLOCK = 2
+World.EDGE = 3
+World.NUM_TILES = 4
 
-function world.new(...)
-  local ret = setmetatable({}, world_mt)
-  ret:init(...)
-  return ret
-end
-
-function world:check_corner(expect, x, y)
+function World:check_corner(expect, x, y)
   if x > 0 and y > 0 and self.tiles[x-1][y-1] == expect then
     return true
   end
@@ -45,7 +39,7 @@ function world:check_corner(expect, x, y)
   return false
 end
 
-function world:get_blocked(xreal, yreal)
+function World:get_blocked(xreal, yreal)
   -- compute zone coordinates
   local xzone = math.floor(xreal / ZONE_SIZE)
   local yzone = math.floor(yreal / ZONE_SIZE)
@@ -64,7 +58,7 @@ function world:get_blocked(xreal, yreal)
   return (tree_noise < TREE_THRESH)
 end
 
-function world:get_tile(xreal, yreal)
+function World:get_tile(xreal, yreal)
   -- compute zone coordinates
   local xzone = math.floor(xreal / ZONE_SIZE)
   local yzone = math.floor(yreal / ZONE_SIZE)
@@ -119,7 +113,7 @@ function world:get_tile(xreal, yreal)
   return grass_tex, tree_tex, dirt_tex
 end
 
-function world:init(id, width, height, map_size)
+function World:init(id, width, height, map_size)
   self.x = 0
   self.y = 0
   self.visible = true
@@ -141,7 +135,7 @@ function world:init(id, width, height, map_size)
   self:update()
 end
 
-function world:update()
+function World:update()
   self.x_start = -math.floor(self.x / self.tile_size)
   self.y_start = -math.floor(self.y / self.tile_size)
   self.x_off = self.x % self.tile_size - self.tile_size
@@ -171,7 +165,7 @@ function world:update()
   self.batch:flush()
 end
 
-function world:draw()
+function World:draw()
   if self.visible then
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.batch, S(self.x_off), S(self.y_off), 0, SCALE, SCALE)
