@@ -2,10 +2,6 @@ require('sprite')
 require('world')
 
 Overworld = State:extend()
-print("Overworld = " .. tostring(Overworld))
-print("Overworld.__call = " .. tostring(Overworld.__call))
-print("State.__call = " .. tostring(State.__call))
-print("Object.__call = " .. tostring(Object.__call))
 
 function Overworld:init()
   local map_size = 240
