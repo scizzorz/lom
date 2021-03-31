@@ -1,14 +1,4 @@
 framesets = {
-  ui_knob = {
-    size = 16,
-    num = 1,
-  },
-
-  ui_socket = {
-    size = 32,
-    num = 1,
-  },
-
   actor = {
     size = 16,
     num = 4,
@@ -29,16 +19,6 @@ atlas = {
   map = {
     texture = "map",
     frameset = "map",
-  },
-
-  ui_knob = {
-    texture = "ui_stick_knob",
-    frameset = "ui_knob",
-  },
-
-  ui_socket = {
-    texture = "ui_stick_socket",
-    frameset = "ui_socket",
   },
 }
 
