@@ -20,8 +20,8 @@ function Object:extend()
   -- copy meta values, since lua
   -- doesn't walk the prototype
   -- chain to find them
-  for k, v in ipairs(self) do
-    if k:sub(1, 2) == "__" then
+  for k, v in pairs(self) do
+    if k:find("__") == 1 then
       proto[k] = v
     end
   end
