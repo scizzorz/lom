@@ -44,11 +44,6 @@ function love.draw()
 
   love.graphics.print("fps " .. math.floor(fps + 0.5), 0, 0)
 
-  if pressed then
-    love.graphics.print(stick_x, 0, 16)
-    love.graphics.print(stick_y, 0, 32)
-  end
-
   love.graphics.setCanvas()
   love.graphics.draw(canvas, 0, 0, 0, CANVAS_SCALE, CANVAS_SCALE)
 end
