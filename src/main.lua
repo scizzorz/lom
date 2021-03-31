@@ -1,7 +1,7 @@
 require('conf')
 require('engine')
 require('gfx')
-require('overworldctl')
+require('overworld')
 require('sprite')
 require('util')
 require('world')
@@ -33,9 +33,9 @@ function love.load()
   love.graphics.setLineStyle('rough')
 
   ENGINE = Engine()
-  OVERWORLD = overworldctl.new(ENGINE)
+  OVERWORLD = Overworld(ENGINE)
 
-  ENGINE:add_control(OVERWORLD)
+  ENGINE:push_state(OVERWORLD)
 
   ENGINE:add_sprite(map)
   ENGINE:add_sprite(bare)
