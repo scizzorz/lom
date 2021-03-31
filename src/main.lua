@@ -80,10 +80,16 @@ function love.mousemoved(...)
   ENGINE:ctl("mousemoved", ...)
 end
 
-function love.keypressed(key)
+function love.wheelmoved(...)
+  ENGINE:ctl("wheelmoved", ...)
+end
+
+function love.keypressed(key, ...)
   if key == "r" and love.keyboard.isDown("lctrl") then
     love.event.quit("restart")
   elseif key == "escape" then
     love.event.quit()
+  else
+    ENGINE:ctl("keypressed", key, ...)
   end
 end
