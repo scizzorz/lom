@@ -1,10 +1,10 @@
-require('conf')
-require('engine')
-require('gfx')
-require('overworld')
-require('sprite')
-require('util')
-require('world')
+require("conf")
+require("engine")
+require("gfx")
+require("overworld")
+require("sprite")
+require("util")
+require("world")
 
 local fps = 0
 
@@ -24,13 +24,13 @@ function love.load()
 
   canvas = love.graphics.newCanvas(WIDTH * SCALE, HEIGHT * SCALE)
 
-  print('window:  ' .. screen_width .. ' x ' .. screen_height)
-  print('canvas:  ' .. WIDTH .. ' x ' .. HEIGHT)
-  print('scale:   ' .. SCALE)
-  print('c scale: ' .. CANVAS_SCALE)
+  print("window:  " .. screen_width .. " x " .. screen_height)
+  print("canvas:  " .. WIDTH .. " x " .. HEIGHT)
+  print("scale:   " .. SCALE)
+  print("c scale: " .. CANVAS_SCALE)
 
-  love.graphics.setDefaultFilter('nearest', 'nearest')
-  love.graphics.setLineStyle('rough')
+  love.graphics.setDefaultFilter("nearest", "nearest")
+  love.graphics.setLineStyle("rough")
 
   ENGINE = Engine()
   OVERWORLD = Overworld()

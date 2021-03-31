@@ -1,8 +1,7 @@
-require('conf')
-require('engine')
-require('gfx')
-require('util')
-
+require("conf")
+require("engine")
+require("gfx")
+require("util")
 
 Sprite = Object:extend()
 

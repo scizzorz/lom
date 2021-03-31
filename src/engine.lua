@@ -86,15 +86,15 @@ function Engine:ctl(event, ...)
 end
 
 function Engine:update(...)
-  self:ctl('update', ...)
+  self:ctl("update", ...)
 end
 
 function Engine:mousepressed(...)
-  self:ctl('mousepressed', ...)
+  self:ctl("mousepressed", ...)
 end
 
 function Engine:mousereleased(...)
-  self:ctl('mousereleased', ...)
+  self:ctl("mousereleased", ...)
 end
 
 function Engine:mousemoved(...)

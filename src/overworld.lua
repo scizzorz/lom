@@ -1,5 +1,5 @@
-require('sprite')
-require('world')
+require("sprite")
+require("world")
 
 Overworld = State:extend()
 

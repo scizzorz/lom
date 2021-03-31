@@ -1,7 +1,7 @@
-require('conf')
-require('engine')
-require('gfx')
-require('util')
+require("conf")
+require("engine")
+require("gfx")
+require("util")
 
 local ZONE_SIZE = 240
 local ZONE_OCTAVE = 250
