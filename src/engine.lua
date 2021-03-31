@@ -32,6 +32,21 @@ function Object:extend()
   return setmetatable(proto, self)
 end
 
+-- state machine
+State = Object:extend()
+
+-- called when this state is added to the stack
+function State:start() end
+
+-- called when this state is removed from the stack
+function State:finish() end
+
+-- called when this state is no longer the top state
+function State:pause() end
+
+-- called when this state becomes the top state
+function State:resume() end
+
 
 -- game engine
 Engine = Object:extend()
@@ -39,6 +54,27 @@ Engine = Object:extend()
 function Engine:init()
   self.sprites = {}
   self.controls = {}
+  self.states = {}
+end
+
+function Engine:push_state(to)
+  if #self.states > 0 then
+    self.states[#self.states]:pause()
+  end
+  table.insert(self.states, to)
+  to:start()
+end
+
+function Engine:pop_state()
+  self.states[#self.states]:finish()
+  self.states[#self.states] = nil
+  self.states[#self.states]:resume()
+end
+
+function Engine:replace_state(to)
+  self.states[#self.states]:finish()
+  self.states[#self.states] = to
+  to:start()
 end
 
 function Engine:add_control(control)
@@ -73,32 +109,28 @@ function Engine:rm_sprite(sprite)
   end
 end
 
-function Engine:control(event, ...)
-  for key, val in ipairs(self.controls) do
-    if val[event] and not val[event](val, ...) then
-      break
-    end
+function Engine:ctl(event, ...)
+  for i, state in ipairs(self.states) do
+    state[event](state, i == #self.states, ...)
   end
 end
 
 function Engine:update(...)
-  self:control('update', ...)
+  self:ctl('update', ...)
 end
 
 function Engine:mousepressed(...)
-  self:control('mousepressed', ...)
+  self:ctl('mousepressed', ...)
 end
 
 function Engine:mousereleased(...)
-  self:control('mousereleased', ...)
+  self:ctl('mousereleased', ...)
 end
 
 function Engine:mousemoved(...)
-  self:control('mousemoved', ...)
+  self:ctl("mousemoved", ...)
 end
 
-function Engine:draw()
-  for key, val in ipairs(self.sprites) do
-    val:draw()
-  end
+function Engine:draw(...)
+  self:ctl("draw", ...)
 end
