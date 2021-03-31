@@ -32,7 +32,7 @@ function love.load()
   love.graphics.setDefaultFilter('nearest', 'nearest')
   love.graphics.setLineStyle('rough')
 
-  ENGINE = engine.new()
+  ENGINE = Engine()
   OVERWORLD = overworldctl.new(ENGINE)
 
   ENGINE:add_control(OVERWORLD)

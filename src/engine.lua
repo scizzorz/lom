@@ -1,25 +1,54 @@
-engine = {}
-local engine_mt = {__index = engine}
+-- base class
+Object = {}
+Object.__index = Object
 
-function engine.new(...)
-  local ret = setmetatable({}, engine_mt)
-  ret:init(...)
-  return ret
+-- constructor
+function Object:__call(...)
+  local this = setmetatable({}, self)
+  return this, this:init(...)
 end
 
-function engine:init()
+-- methods
+function Object:init() end
+function Object:update() end
+function Object:draw() end
+
+-- subclassing
+function Object:extend()
+  proto = {}
+
+  -- copy meta values, since lua
+  -- doesn't walk the prototype
+  -- chain to find them
+  for k, v in ipairs(self) do
+    if k:sub(1, 2) == "__" then
+      proto[k] = v
+    end
+  end
+
+  proto.__index = proto
+  proto.__super = self
+
+  return setmetatable(proto, self)
+end
+
+
+-- game engine
+Engine = Object:extend()
+
+function Engine:init()
   self.sprites = {}
   self.controls = {}
 end
 
-function engine:add_control(control)
+function Engine:add_control(control)
   table.insert(self.controls, control)
   if control.add then
     control:add(self)
   end
 end
 
-function engine:rm_control(control)
+function Engine:rm_control(control)
   for key, val in ipairs(self.controls) do
     if val == control then
       table.remove(self.controls, key)
@@ -31,11 +60,11 @@ function engine:rm_control(control)
   end
 end
 
-function engine:add_sprite(sprite)
+function Engine:add_sprite(sprite)
   table.insert(self.sprites, sprite)
 end
 
-function engine:rm_sprite(sprite)
+function Engine:rm_sprite(sprite)
   for key, val in ipairs(self.sprites) do
     if val == sprite then
       table.remove(self.sprites, key)
@@ -44,7 +73,7 @@ function engine:rm_sprite(sprite)
   end
 end
 
-function engine:control(event, ...)
+function Engine:control(event, ...)
   for key, val in ipairs(self.controls) do
     if val[event] and not val[event](val, ...) then
       break
@@ -52,23 +81,23 @@ function engine:control(event, ...)
   end
 end
 
-function engine:update(...)
+function Engine:update(...)
   self:control('update', ...)
 end
 
-function engine:mousepressed(...)
+function Engine:mousepressed(...)
   self:control('mousepressed', ...)
 end
 
-function engine:mousereleased(...)
+function Engine:mousereleased(...)
   self:control('mousereleased', ...)
 end
 
-function engine:mousemoved(...)
+function Engine:mousemoved(...)
   self:control('mousemoved', ...)
 end
 
-function engine:draw()
+function Engine:draw()
   for key, val in ipairs(self.sprites) do
     val:draw()
   end
