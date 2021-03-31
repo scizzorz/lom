@@ -23,6 +23,7 @@ end
 function Overworld:update(top, dt)
   self.map:update()
 
+  local ds = dt * 60
   local dx = 0
   local dy = 0
 
@@ -41,12 +42,11 @@ function Overworld:update(top, dt)
   end
 
   if dx ~= 0 and dy ~= 0 then
-    dx = dx / math.sqrt(2)
-    dy = dy / math.sqrt(2)
+    ds = ds / math.sqrt(2)
   end
 
   if dx ~= 0 or dy ~= 0 then
-    self:move(dx, dy)
+    self:move(dx * ds, dy * ds)
   end
 end
 
