@@ -19,10 +19,37 @@ function Overworld:init()
   self.map = World("map", map_width, map_height, map_size)
   self.map.x = -WIDTH / 2
   self.map.y = -HEIGHT / 2
+
+  self.hand = {
+    Card("card_bite"),
+    Card("card_bite"),
+    Card("card_bite"),
+    Card("card_bite"),
+    Card("card_bite"),
+    Card("card_bite"),
+  }
+
+  for i, card in ipairs(self.hand) do
+    card.x = WIDTH / 2
+    card.y = HEIGHT + card.h
+    card.tx = WIDTH / 2 - 22 * (#self.hand - 1) + 44 * (i - 1)
+    card.ty = HEIGHT
+  end
+
+  self.card_sel = 1
 end
 
 function Overworld:update(top, dt)
   self.map:update()
+
+  for i, card in ipairs(self.hand) do
+    if i == self.card_sel then
+      card.ty = HEIGHT - card.h / 4
+    else
+      card.ty = HEIGHT
+    end
+    card:update()
+  end
 
   -- handle movement
   local ds = dt * 60
@@ -67,6 +94,45 @@ function Overworld:draw(top)
   self.map:draw()
   self.bare:draw()
   self.aiming:draw()
+
+  for i, card in ipairs(self.hand) do
+    card:draw()
+  end
+end
+
+function Overworld:keypressed(top, key)
+  local keymap = {
+    ["1"]=1,
+    ["2"]=2,
+    ["3"]=3,
+    ["4"]=4,
+    ["5"]=5,
+    ["6"]=6,
+    ["7"]=7,
+    ["8"]=8,
+    ["9"]=9,
+  }
+
+  if keymap[key] ~= nil and keymap[key] <= #self.hand then
+    self.card_sel = keymap[key]
+  end
+end
+
+function Overworld:wheelmoved(top, x, y)
+  print("wheelmove: " .. x .. ", " .. y)
+  if y < 0 then
+    self.card_sel = self.card_sel + 1
+  elseif y > 0 then
+    self.card_sel = self.card_sel - 1
+  end
+
+  if self.card_sel == 0 then
+    self.card_sel = #self.hand
+  end
+
+  if self.card_sel > #self.hand then
+    self.card_sel = 1
+  end
 end
 
 function Overworld:move(x, y)
