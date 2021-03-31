@@ -1,17 +1,12 @@
 require('conf')
+require('engine')
 require('gfx')
 require('util')
 
-sprite = {}
-local sprite_mt = {__index = sprite}
 
-function sprite.new(...)
-  local ret = setmetatable({}, sprite_mt)
-  ret:init(...)
-  return ret
-end
+Sprite = Object:extend()
 
-function sprite:init(id)
+function Sprite:init(id)
   self.x = 0
   self.y = 0
   self.size = framesets[atlas[id].frameset].size
@@ -25,7 +20,7 @@ function sprite:init(id)
   self.quads = load_quads(atlas[id].frameset)
 end
 
-function sprite:draw()
+function Sprite:draw()
   if self.visible then
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.gfx, self.quads[self.frame],

@@ -9,7 +9,7 @@ function Overworld:init()
   local map_width = math.ceil(WIDTH / tile_size) + 2
   local map_height = math.ceil(HEIGHT / tile_size) + 2
 
-  self.bare = sprite.new("bare")
+  self.bare = Sprite("bare")
   self.bare.x = WIDTH / 2 - 8
   self.bare.y = HEIGHT / 2 - 8
 
