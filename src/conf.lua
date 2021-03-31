@@ -1,6 +1,6 @@
 function love.conf(t)
-  t.window.width = 800
-  t.window.height = 450
+  t.window.width = 1200
+  t.window.height = 675
   t.window.title = "Heroes of Might & Mango"
 end
 
