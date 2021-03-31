@@ -40,7 +40,7 @@ end
 function love.draw()
   love.graphics.setCanvas(canvas)
 
-  ENGINE:draw()
+  ENGINE:ctl("draw")
 
   love.graphics.print("fps " .. math.floor(fps + 0.5), 0, 0)
 
@@ -50,17 +50,17 @@ end
 
 function love.update(dt, ...)
   fps = 1 / dt
-  ENGINE:update(dt, ...)
+  ENGINE:ctl("update", dt, ...)
 end
 
 function love.mousepressed(...)
-  ENGINE:mousepressed(...)
+  ENGINE:ctl("mousepressed", ...)
 end
 
 function love.mousereleased(...)
-  ENGINE:mousereleased(...)
+  ENGINE:ctl("mousereleased", ...)
 end
 
 function love.mousemoved(...)
-  ENGINE:mousemoved(...)
+  ENGINE:ctl("mousemoved", ...)
 end

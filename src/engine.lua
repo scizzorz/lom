@@ -84,23 +84,3 @@ function Engine:ctl(event, ...)
     end
   end
 end
-
-function Engine:update(...)
-  self:ctl("update", ...)
-end
-
-function Engine:mousepressed(...)
-  self:ctl("mousepressed", ...)
-end
-
-function Engine:mousereleased(...)
-  self:ctl("mousereleased", ...)
-end
-
-function Engine:mousemoved(...)
-  self:ctl("mousemoved", ...)
-end
-
-function Engine:draw(...)
-  self:ctl("draw", ...)
-end
