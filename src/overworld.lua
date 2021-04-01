@@ -173,6 +173,10 @@ function Overworld:draw_card()
   if self.card_sel == 0 then
     self.card_sel = 1
   end
+
+  if #self.deck == 0 then
+    self:reshuffle()
+  end
 end
 
 function Overworld:use_card()
@@ -187,6 +191,17 @@ function Overworld:use_card()
     card.ty = HEIGHT - #self.discard * 2 - 19
   end
   table.insert(self.discard, card)
+end
+
+function Overworld:reshuffle()
+  for n=1, #self.discard do
+    local card = table.remove(self.discard, math.random(#self.discard))
+    table.insert(self.deck, card)
+    card.tx = WIDTH
+    card.ty = HEIGHT - n * 2 - 19
+    card.tflip = 1
+    card.delay = n * 3
+  end
 end
 
 function Overworld:mousepressed(top, x, y, button)

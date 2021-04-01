@@ -45,15 +45,20 @@ function Card:init(tex)
   self.angle = 0
   self.flip = 0
   self.tflip = 0
+  self.delay = 0
   self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
   self.tex = load_gfx(tex)
   self.back = load_gfx("card_back")
 end
 
 function Card:update()
-  self.x = self.x + (self.tx - self.x) / 4
-  self.y = self.y + (self.ty - self.y) / 4
-  self.flip = self.flip + (self.tflip - self.flip) / 7
+  if self.delay > 0 then
+    self.delay = self.delay - 1
+  else
+    self.x = self.x + (self.tx - self.x) / 4
+    self.y = self.y + (self.ty - self.y) / 4
+    self.flip = self.flip + (self.tflip - self.flip) / 7
+  end
 end
 
 function Card:draw()
