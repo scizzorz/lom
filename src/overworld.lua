@@ -44,6 +44,27 @@ function Overworld:init()
     card.tflip = 1
     table.insert(self.deck, card)
   end
+
+  -- prep graphics so they don't jump during the transition state
+  self.map:update()
+  self:aim()
+end
+
+function Overworld:aim()
+  -- scaling mouse coordinates is annoying
+  local mx, my = love.mouse.getPosition()
+  mx = s2p(mx - SCISSOR.x)
+  my = s2p(my - SCISSOR.y)
+
+  -- finding bare center is annoying
+  self.aiming.x = self.bare.x + 8
+  self.aiming.y = self.bare.y + 8
+
+  -- lock angle to eighth-turns (pi / 4 radians)
+  local angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my)
+  local rnd = math.pi / 4
+  angle = math.floor(angle / rnd + 0.5) * rnd
+  self.aiming.angle =  angle + math.pi / 2
 end
 
 function Overworld:update(top, dt)
@@ -104,20 +125,7 @@ function Overworld:update(top, dt)
     self:move(dx * ds, dy * ds)
   end
 
-  -- scaling mouse coordinates is annoying
-  local mx, my = love.mouse.getPosition()
-  mx = s2p(mx - SCISSOR.x)
-  my = s2p(my - SCISSOR.y)
-
-  -- finding bare center is annoying
-  self.aiming.x = self.bare.x + 8
-  self.aiming.y = self.bare.y + 8
-
-  -- lock angle to eighth-turns (pi / 4 radians)
-  local angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my)
-  local rnd = math.pi / 4
-  angle = math.floor(angle / rnd + 0.5) * rnd
-  self.aiming.angle =  angle + math.pi / 2
+  self:aim()
 end
 
 function Overworld:draw(top)
