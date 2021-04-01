@@ -130,16 +130,25 @@ function Overworld:keypressed(top, key)
   end
 end
 
+function Overworld:draw_card()
+  if #self.hand == 8 then
+    -- FIXME what happens if you overdraw?
+    return
+  end
+
+  local card = Card("card_bite")
+  card.x = WIDTH
+  card.y = HEIGHT
+  table.insert(self.hand, card)
+  if self.card_sel == 0 then
+    self.card_sel = 1
+  end
+end
+
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
-    local card = Card("card_bite")
-    card.x = WIDTH
-    card.y = HEIGHT
-    table.insert(self.hand, card)
-    if self.card_sel == 0 then
-      self.card_sel = 1
-    end
+    self:draw_card()
   end
 
   -- right
