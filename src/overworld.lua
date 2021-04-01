@@ -20,20 +20,18 @@ function Overworld:init()
   self.map.x = -WIDTH / 2
   self.map.y = -HEIGHT / 2
 
-  self.hand = {
-    Card("card_bite"),
-    Card("card_bite"),
-    Card("card_bite"),
-    Card("card_bite"),
-    Card("card_bite"),
-  }
+  self.card_sel = 0
+  self.hand = {}
+
+  for n=1, 3 do
+    self:draw_card()
+  end
 
   for i, card in ipairs(self.hand) do
     card.x = WIDTH / 2
     card.y = HEIGHT + card.h
   end
 
-  self.card_sel = 1
 end
 
 function Overworld:update(top, dt)
