@@ -194,6 +194,10 @@ function Overworld:use_card()
 end
 
 function Overworld:reshuffle()
+  -- FIXME because this moves things over to `deck` while they're still in the
+  -- discard pile, for a brief moment they're shown in reshuffled deck order
+  -- instead of discard order.
+
   for n=1, #self.discard do
     local card = table.remove(self.discard, math.random(#self.discard))
     table.insert(self.deck, card)
