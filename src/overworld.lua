@@ -4,6 +4,15 @@ require("util")
 
 Overworld = State:extend()
 
+local library = {
+  "card_bite",
+  "card_claw",
+}
+
+function choose(from)
+  return from[math.random(#from)]
+end
+
 function Overworld:init()
   local map_size = 240
   local tile_size = 16
@@ -22,20 +31,26 @@ function Overworld:init()
 
   self.card_sel = 0
   self.hand = {}
+  self.deck = {}
 
-  for n=1, 3 do
-    self:draw_card()
+  for n=1, 25 do
+    local card = Card(choose(library))
+    card.x = WIDTH
+    card.y = HEIGHT
+    card.tx = WIDTH
+    card.ty = HEIGHT - n * 2 - 19
+    card.flip = 1
+    card.tflip = 1
+    table.insert(self.deck, card)
   end
-
-  for i, card in ipairs(self.hand) do
-    card.x = WIDTH / 2
-    card.y = HEIGHT + card.h
-  end
-
 end
 
 function Overworld:update(top, dt)
   self.map:update()
+
+  for i, card in ipairs(self.deck) do
+    card:update()
+  end
 
   for i, card in ipairs(self.hand) do
     local depth = 0
@@ -105,6 +120,10 @@ function Overworld:draw(top)
   self.bare:draw()
   self.aiming:draw()
 
+  for i, card in ipairs(self.deck) do
+    card:draw()
+  end
+
   for i, card in ipairs(self.hand) do
     card:draw()
   end
@@ -134,9 +153,13 @@ function Overworld:draw_card()
     return
   end
 
-  local card = Card("card_bite")
-  card.x = WIDTH
-  card.y = HEIGHT
+  if #self.deck == 0 then
+    -- FIXME what happens if you have no deck left?
+    return
+  end
+
+  local card = table.remove(self.deck)
+  card.tflip = 0
   table.insert(self.hand, card)
   if self.card_sel == 0 then
     self.card_sel = 1
