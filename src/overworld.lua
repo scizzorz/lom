@@ -190,15 +190,17 @@ function Overworld:draw_card()
 end
 
 function Overworld:use_card()
-  local card = table.remove(self.hand, self.card_sel)
+  local card = self.hand[self.card_sel]
   if card:castable() then
     card:cast()
-    if self.card_sel > #self.hand then
-      self.card_sel = #self.hand
-    end
     card.angle = 0
     card.tx = 0
     card.ty = HEIGHT - #self.discard * DECK_SPACING + DECK_DEPTH
+
+    table.remove(self.hand, self.card_sel)
+    if self.card_sel > #self.hand then
+      self.card_sel = #self.hand
+    end
   end
   table.insert(self.discard, card)
 end
