@@ -76,10 +76,61 @@ function Engine:replace_state(to)
   to:start()
 end
 
+function Engine:change_state(to)
+  self:replace_state(Transition(self.states[#self.states], to))
+end
+
 function Engine:ctl(event, ...)
   for i, state in ipairs(self.states) do
     if state[event] ~= nil then
       state[event](state, i == #self.states, ...)
     end
   end
+end
+
+
+-- transition state
+Transition = State:extend()
+
+function Transition:init(from, to)
+  self.from = from
+  self.to = to
+  self.phase = 0
+  self.a = 0
+  self.ta = 1
+end
+
+function Transition:update(top)
+  if not top then return end
+
+  -- slow fade
+  self.a = self.a + (self.ta - self.a) / 4
+
+  -- check if we're done with a transition, then move to the next
+  -- phase 0: draw "from" state and fade out
+  -- phase 1: draw "to" state and fade in
+  -- end of phase 1: state change
+  local dist = math.abs(self.a - self.ta)
+  if dist < 0.01 then
+    if self.phase == 0 then
+      self.phase = 1
+      self.ta = 0
+    elseif self.phase == 1 then
+      -- ew, global. oh well.
+      ENGINE:replace_state(self.to)
+    end
+  end
+end
+
+function Transition:draw()
+  if self.phase == 0 then
+    self.from:draw()
+  else
+    self.to:draw()
+  end
+
+  -- black out the screen
+  local w, h = love.graphics.getDimensions()
+  love.graphics.setColor(0, 0, 0, self.a)
+  love.graphics.rectangle("fill", 0, 0, w, h)
 end
