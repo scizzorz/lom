@@ -87,7 +87,7 @@ end
 function love.keypressed(key, ...)
   if key == "r" and love.keyboard.isDown("lctrl") then
     love.event.quit("restart")
-  elseif key == "escape" then
+  elseif key == KEYBINDINGS.menu then
     love.event.quit()
   elseif key == "enter" or key == "return" then
     OVERWORLD = Overworld()

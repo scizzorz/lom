@@ -34,12 +34,12 @@ function Overworld:init()
   self.deck = {}
   self.discard = {}
 
-  for n=1, 25 do
+  for n=1, DECK_SIZE do
     local card = Card(choose(library))
     card.x = WIDTH
     card.y = HEIGHT
     card.tx = WIDTH
-    card.ty = HEIGHT - n * 2 - 19
+    card.ty = HEIGHT - n * DECK_SPACING + DECK_DEPTH
     card.flip = 1
     card.tflip = 1
     table.insert(self.deck, card)
@@ -81,15 +81,15 @@ function Overworld:update(top, dt)
   for i, card in ipairs(self.hand) do
     local depth = 0
 
-    card.tx = WIDTH / 2 - 17 * (#self.hand - 1) + 34 * (i - 1)
+    card.tx = (WIDTH / 2) - (HAND_SPACING / 2 * (#self.hand - 1)) + (HAND_SPACING * (i - 1))
     card.ty = HEIGHT
     if i == self.card_sel then
-      depth = -20
+      depth = SELECTED_DEPTH
     else
-      depth = 8
+      depth = HAND_DEPTH
     end
 
-    local angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * 4)
+    local angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * HAND_ANGLE)
     card.tx = card.tx + math.cos(angle) * depth
     card.ty = card.ty + math.sin(angle) * depth
 
@@ -98,21 +98,21 @@ function Overworld:update(top, dt)
   end
 
   -- handle movement
-  local ds = dt * 60
+  local ds = dt * 60 * PLAYER_SPEED
   local dx = 0
   local dy = 0
 
-  if love.keyboard.isDown("a") then
+  if love.keyboard.isDown(KEYBINDINGS.left) then
     dx = dx - 1
   end
-  if love.keyboard.isDown("d") then
+  if love.keyboard.isDown(KEYBINDINGS.right) then
     dx = dx + 1
   end
 
-  if love.keyboard.isDown("w") then
+  if love.keyboard.isDown(KEYBINDINGS.up) then
     dy = dy - 1
   end
-  if love.keyboard.isDown("s") then
+  if love.keyboard.isDown(KEYBINDINGS.down) then
     dy = dy + 1
   end
 
@@ -148,15 +148,15 @@ end
 
 function Overworld:keypressed(top, key)
   local keymap = {
-    ["1"]=1,
-    ["2"]=2,
-    ["3"]=3,
-    ["4"]=4,
-    ["5"]=5,
-    ["6"]=6,
-    ["7"]=7,
-    ["8"]=8,
-    ["9"]=9,
+    [KEYBINDINGS.card1]=1,
+    [KEYBINDINGS.card2]=2,
+    [KEYBINDINGS.card3]=3,
+    [KEYBINDINGS.card4]=4,
+    [KEYBINDINGS.card5]=5,
+    [KEYBINDINGS.card6]=6,
+    [KEYBINDINGS.card7]=7,
+    [KEYBINDINGS.card8]=8,
+    [KEYBINDINGS.card9]=9,
   }
 
   if keymap[key] ~= nil and keymap[key] <= #self.hand then
@@ -165,7 +165,7 @@ function Overworld:keypressed(top, key)
 end
 
 function Overworld:draw_card()
-  if #self.hand == 8 then
+  if #self.hand == MAX_HAND_SIZE then
     -- FIXME what happens if you overdraw?
     return
   end
@@ -196,7 +196,7 @@ function Overworld:use_card()
     end
     card.angle = 0
     card.tx = 0
-    card.ty = HEIGHT - #self.discard * 2 - 19
+    card.ty = HEIGHT - #self.discard * DECK_SPACING + DECK_DEPTH
   end
   table.insert(self.discard, card)
 end
@@ -210,9 +210,9 @@ function Overworld:reshuffle()
     local card = table.remove(self.discard, math.random(#self.discard))
     table.insert(self.deck, card)
     card.tx = WIDTH
-    card.ty = HEIGHT - n * 2 - 19
+    card.ty = HEIGHT - n * DECK_SPACING + DECK_DEPTH
     card.tflip = 1
-    card.delay = n * 3
+    card.delay = n * SHUFFLE_DELAY
   end
 end
 

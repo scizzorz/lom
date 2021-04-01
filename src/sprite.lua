@@ -55,9 +55,9 @@ function Card:update()
   if self.delay > 0 then
     self.delay = self.delay - 1
   else
-    self.x = self.x + (self.tx - self.x) / 4
-    self.y = self.y + (self.ty - self.y) / 4
-    self.flip = self.flip + (self.tflip - self.flip) / 7
+    self.x = self.x + (self.tx - self.x) / CARD_MOVE_SPEED
+    self.y = self.y + (self.ty - self.y) / CARD_MOVE_SPEED
+    self.flip = self.flip + (self.tflip - self.flip) / CARD_FLIP_SPEED
   end
 end
 

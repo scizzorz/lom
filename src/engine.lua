@@ -104,7 +104,7 @@ function Transition:update(top)
   if not top then return end
 
   -- slow fade
-  self.a = self.a + (self.ta - self.a) / 4
+  self.a = self.a + (self.ta - self.a) / TRANSITION_SPEED
 
   -- check if we're done with a transition, then move to the next
   -- phase 0: draw "from" state and fade out
