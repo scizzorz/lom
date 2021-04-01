@@ -125,15 +125,15 @@ function Overworld:draw(top)
   self.bare:draw()
   self.aiming:draw()
 
+  for i, card in ipairs(self.hand) do
+    card:draw()
+  end
+
   for i, card in ipairs(self.deck) do
     card:draw()
   end
 
   for i, card in ipairs(self.discard) do
-    card:draw()
-  end
-
-  for i, card in ipairs(self.hand) do
     card:draw()
   end
 end
