@@ -89,6 +89,9 @@ function love.keypressed(key, ...)
     love.event.quit("restart")
   elseif key == "escape" then
     love.event.quit()
+  elseif key == "enter" or key == "return" then
+    OVERWORLD = Overworld()
+    ENGINE:change_state(OVERWORLD)
   else
     ENGINE:ctl("keypressed", key, ...)
   end
