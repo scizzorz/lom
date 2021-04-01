@@ -57,6 +57,14 @@ function Card:draw()
   love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 end
 
+function Card:castable()
+  return true
+end
+
+function Card:cast()
+  return true
+end
+
 Aiming = Object:extend()
 
 function Aiming:init(tex, w, h, ox, oy)

@@ -125,8 +125,32 @@ function Overworld:keypressed(top, key)
   end
 end
 
+function Overworld:mousepressed(top, x, y, button)
+  -- left
+  if button == 1 then
+    local card = Card("card_bite")
+    card.x = WIDTH
+    card.y = HEIGHT
+    table.insert(self.hand, card)
+    if self.card_sel == 0 then
+      self.card_sel = 1
+    end
+  end
+
+  -- right
+  if button == 2 and #self.hand > 0 then
+    local card = self.hand[self.card_sel]
+    if card:castable() then
+      card:cast()
+      table.remove(self.hand, self.card_sel)
+      if self.card_sel > #self.hand then
+        self.card_sel = #self.hand
+      end
+    end
+  end
+end
+
 function Overworld:wheelmoved(top, x, y)
-  print("wheelmove: " .. x .. ", " .. y)
   if y < 0 then
     self.card_sel = self.card_sel + 1
   elseif y > 0 then
