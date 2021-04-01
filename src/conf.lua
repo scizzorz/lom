@@ -10,25 +10,35 @@ end
 WIDTH = 400
 HEIGHT = 225
 
+-- game play config
 PLAYER_SPEED = 1
-
 MAX_HAND_SIZE = 5
 DECK_SIZE = 25
 
+-- state transition speed
 -- bigger is slower
 TRANSITION_SPEED = 4
+
+-- card animation speeds
+-- bigger is slower
 CARD_FLIP_SPEED = 7
 CARD_MOVE_SPEED = 4
 
+-- deck / discard pile positioning
 DECK_SPACING = 4
 DECK_DEPTH = -17
 
+-- reshuffle speeds
 SHUFFLE_DELAY = 2
 
+-- hand positioning
 HAND_DEPTH = 6
 SELECTED_DEPTH = -20
 HAND_SPACING = 34
 HAND_ANGLE = 4
+
+-- set to 0 for full 360 aiming; otherwise, it's the number lock steps
+AIMING_STEPS = 8
 
 KEYBINDINGS = {
   card1 = "1",

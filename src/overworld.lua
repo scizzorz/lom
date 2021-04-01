@@ -62,8 +62,10 @@ function Overworld:aim()
 
   -- lock angle to eighth-turns (pi / 4 radians)
   local angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my)
-  local rnd = math.pi / 4
-  angle = math.floor(angle / rnd + 0.5) * rnd
+  if AIMING_STEPS > 0 then
+    local rnd = (2 * math.pi) / AIMING_STEPS
+    angle = math.floor(angle / rnd + 0.5) * rnd
+  end
   self.aiming.angle =  angle + math.pi / 2
 end
 
