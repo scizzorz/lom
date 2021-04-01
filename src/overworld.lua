@@ -94,7 +94,12 @@ function Overworld:update(top, dt)
   -- finding bare center is annoying
   self.aiming.x = self.bare.x + 8
   self.aiming.y = self.bare.y + 8
-  self.aiming.angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my) + math.pi / 2
+
+  -- lock angle to eighth-turns (pi / 4 radians)
+  local angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my)
+  local rnd = math.pi / 4
+  angle = math.floor(angle / rnd + 0.5) * rnd
+  self.aiming.angle =  angle + math.pi / 2
 end
 
 function Overworld:draw(top)
