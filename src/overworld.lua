@@ -32,6 +32,7 @@ function Overworld:init()
   self.card_sel = 0
   self.hand = {}
   self.deck = {}
+  self.discard = {}
 
   for n=1, 25 do
     local card = Card(choose(library))
@@ -49,6 +50,10 @@ function Overworld:update(top, dt)
   self.map:update()
 
   for i, card in ipairs(self.deck) do
+    card:update()
+  end
+
+  for i, card in ipairs(self.discard) do
     card:update()
   end
 
@@ -124,6 +129,10 @@ function Overworld:draw(top)
     card:draw()
   end
 
+  for i, card in ipairs(self.discard) do
+    card:draw()
+  end
+
   for i, card in ipairs(self.hand) do
     card:draw()
   end
@@ -166,6 +175,20 @@ function Overworld:draw_card()
   end
 end
 
+function Overworld:use_card()
+  local card = table.remove(self.hand, self.card_sel)
+  if card:castable() then
+    card:cast()
+    if self.card_sel > #self.hand then
+      self.card_sel = #self.hand
+    end
+    card.angle = 0
+    card.tx = 0
+    card.ty = HEIGHT - #self.discard * 2 - 19
+  end
+  table.insert(self.discard, card)
+end
+
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
@@ -174,14 +197,7 @@ function Overworld:mousepressed(top, x, y, button)
 
   -- right
   if button == 2 and #self.hand > 0 then
-    local card = self.hand[self.card_sel]
-    if card:castable() then
-      card:cast()
-      table.remove(self.hand, self.card_sel)
-      if self.card_sel > #self.hand then
-        self.card_sel = #self.hand
-      end
-    end
+    self:use_card()
   end
 end
 
