@@ -26,14 +26,11 @@ function Overworld:init()
     Card("card_bite"),
     Card("card_bite"),
     Card("card_bite"),
-    Card("card_bite"),
   }
 
   for i, card in ipairs(self.hand) do
     card.x = WIDTH / 2
     card.y = HEIGHT + card.h
-    card.tx = WIDTH / 2 - 17 * (#self.hand - 1) + 34 * (i - 1)
-    card.ty = HEIGHT
   end
 
   self.card_sel = 1
@@ -43,12 +40,21 @@ function Overworld:update(top, dt)
   self.map:update()
 
   for i, card in ipairs(self.hand) do
+    local depth = 0
+
+    card.tx = WIDTH / 2 - 17 * (#self.hand - 1) + 34 * (i - 1)
+    card.ty = HEIGHT
     if i == self.card_sel then
-      card.ty = HEIGHT - card.h / 4
+      depth = -20
     else
-      card.ty = HEIGHT + card.h / 6
+      depth = 8
     end
-    card.angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * 4) + math.pi / 2
+
+    local angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * 4)
+    card.tx = card.tx + math.cos(angle) * depth
+    card.ty = card.ty + math.sin(angle) * depth
+
+    card.angle = angle + math.pi / 2
     card:update()
   end
 
