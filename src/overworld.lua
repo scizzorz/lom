@@ -232,12 +232,8 @@ function Overworld:mousepressed(top, x, y, button)
   end
 end
 
-function Overworld:wheelmoved(top, x, y)
-  if y < 0 then
-    self.card_sel = self.card_sel + 1
-  elseif y > 0 then
-    self.card_sel = self.card_sel - 1
-  end
+function Overworld:move_selection(dir)
+  self.card_sel = self.card_sel + dir
 
   if self.card_sel == 0 then
     self.card_sel = #self.hand
@@ -246,6 +242,10 @@ function Overworld:wheelmoved(top, x, y)
   if self.card_sel > #self.hand then
     self.card_sel = 1
   end
+end
+
+function Overworld:wheelmoved(top, x, y)
+  self:move_selection(-y)
 end
 
 function Overworld:move(x, y)
