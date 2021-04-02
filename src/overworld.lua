@@ -95,7 +95,7 @@ function Overworld:update(top, dt)
     card.tx = card.tx + math.cos(angle) * depth
     card.ty = card.ty + math.sin(angle) * depth
 
-    card.angle = angle + math.pi / 2
+    card.angle = angle - math.pi / 2
     card:update()
   end
 
