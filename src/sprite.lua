@@ -53,7 +53,8 @@ function HealthBar:init(cur, max)
   self.fill = load_gfx("ui_health_fill")
 end
 
-function HealthBar:update()
+function HealthBar:update(cur)
+  self.cur = cur
 end
 
 function HealthBar:draw()

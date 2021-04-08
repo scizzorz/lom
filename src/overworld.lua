@@ -32,17 +32,17 @@ function Overworld:init()
   self.map.y = -HEIGHT / 2
 
   self.max_mana = MAX_MANA * MANA_PARTS
-  self.mana = self.max_mana
+  self.mana = 0
 
   self.max_health = MAX_HEALTH
-  self.health = self.max_health
+  self.health = 0
 
   self.card_sel = 0
   self.hand = {}
   self.deck = {}
   self.discard = {}
 
-  self.ui_health = HealthBar()
+  self.ui_health = HealthBar(self.health, self.max_health)
   self.ui_health.x = 0
   self.ui_health.y = 0
 
@@ -103,7 +103,15 @@ end
 function Overworld:update(top, dt)
   self.map:update()
   self:update_mana_ui()
-  self.ui_health:update()
+  self.ui_health:update(self.health)
+
+  if self.health < self.max_health then
+    self.health = self.health + 1
+  end
+
+  if self.mana < self.max_mana then
+    self.mana = self.mana + 1
+  end
 
   for i, card in ipairs(self.deck) do
     card:update()
