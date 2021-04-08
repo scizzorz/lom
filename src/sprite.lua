@@ -31,6 +31,45 @@ function Sprite:draw()
   end
 end
 
+HealthBar = Object:extend()
+
+function HealthBar:init(cur, max)
+  self.cur = cur or 50
+  self.max = max or 100
+  self.x = 0
+  self.y = 0
+  self.tx = 0
+  self.w = 80
+  self.h = 16
+  self.ty = 0
+  self.ox = 0
+  self.oy = 0
+  self.angle = 0
+  self.delay = 0
+
+  self.frame = load_gfx("ui_health_frame")
+  self.frame_quad = love.graphics.newQuad(0, 0, 80, 16, 80, 16)
+
+  self.fill = load_gfx("ui_health_fill")
+end
+
+function HealthBar:update()
+end
+
+function HealthBar:draw()
+  love.graphics.setColor(255, 255, 255)
+
+  -- draw frame
+  love.graphics.draw(self.frame, self.frame_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
+
+  -- draw fill if we have some value
+  if self.cur > 0 then
+    local width = math.max(1, math.floor(self.cur / self.max * 66))
+    local fill_quad = love.graphics.newQuad(0, 0, width, 10, 66, 10)
+    love.graphics.draw(self.fill, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
+  end
+end
+
 Card = Object:extend()
 
 function Card:init(id)

@@ -15,7 +15,12 @@ PLAYER_SPEED = 1
 MAX_HAND_SIZE = 5
 DECK_SIZE = 25
 
+-- health config
+MAX_HEALTH = 100
+
 -- mana config
+-- under the hood, each mana crystal is made up of fractional mana pieces. it
+-- makes it easier to work with fractional values that we may want later.
 MAX_MANA = 5
 MANA_PARTS = 60
 

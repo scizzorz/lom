@@ -32,17 +32,25 @@ function Overworld:init()
   self.map.y = -HEIGHT / 2
 
   self.max_mana = MAX_MANA * MANA_PARTS
-  self.mana = 2 * MANA_PARTS
+  self.mana = self.max_mana
+
+  self.max_health = MAX_HEALTH
+  self.health = self.max_health
+
   self.card_sel = 0
   self.hand = {}
   self.deck = {}
   self.discard = {}
 
+  self.ui_health = HealthBar()
+  self.ui_health.x = 0
+  self.ui_health.y = 0
+
   self.ui_mana = {}
   for n=1, (self.max_mana / MANA_PARTS) do
     local crystal = Sprite("mana")
-    crystal.x = WIDTH / 2 - (crystal.size * self.max_mana / MANA_PARTS) / 2 + (n - 1) * crystal.size
-    crystal.y = HEIGHT / 2 + 18
+    crystal.x = (n - 1) * crystal.size
+    crystal.y = 16
     table.insert(self.ui_mana, crystal)
   end
 
@@ -95,6 +103,7 @@ end
 function Overworld:update(top, dt)
   self.map:update()
   self:update_mana_ui()
+  self.ui_health:update()
 
   for i, card in ipairs(self.deck) do
     card:update()
@@ -158,6 +167,7 @@ function Overworld:draw(top)
   self.map:draw()
   self.bare:draw()
   self.aiming:draw()
+  self.ui_health:draw()
 
   for i, crystal in ipairs(self.ui_mana) do
     crystal:draw()
