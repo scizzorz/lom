@@ -113,11 +113,12 @@ function Card:draw()
   end
 end
 
-function Card:castable()
-  return true
+function Card:castable(overworld)
+  return overworld.mana >= self.data.cost * MANA_PARTS
 end
 
-function Card:cast()
+function Card:cast(overworld)
+  overworld.mana = overworld.mana - self.data.cost * MANA_PARTS
   return true
 end
 
