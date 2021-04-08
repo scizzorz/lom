@@ -33,7 +33,9 @@ end
 
 Card = Object:extend()
 
-function Card:init(tex)
+function Card:init(id)
+  self.id = id
+  self.data = card_db[id]
   self.x = 0
   self.y = 0
   self.tx = 0
@@ -46,8 +48,9 @@ function Card:init(tex)
   self.flip = 0
   self.tflip = 0
   self.delay = 0
+
   self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
-  self.tex = load_gfx(tex)
+  self.tex = load_gfx(self.data.art)
   self.back = load_gfx("card_back")
 end
 
