@@ -30,6 +30,7 @@ TRANSITION_SPEED = 4
 
 -- card animation speeds
 -- bigger is slower
+CARD_FADE_SPEED = 7
 CARD_FLIP_SPEED = 7
 CARD_MOVE_SPEED = 4
 

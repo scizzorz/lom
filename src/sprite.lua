@@ -89,6 +89,9 @@ function Card:init(id)
   self.tflip = 0
   self.delay = 0
 
+  self.fade = 0
+  self.tfade = 0
+
   self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
   self.tex = load_gfx(self.data.art)
   self.back = load_gfx("card_back")
@@ -101,14 +104,24 @@ function Card:update()
     self.x = self.x + (self.tx - self.x) / CARD_MOVE_SPEED
     self.y = self.y + (self.ty - self.y) / CARD_MOVE_SPEED
     self.flip = self.flip + (self.tflip - self.flip) / CARD_FLIP_SPEED
+    self.fade = self.fade + (self.tfade - self.fade) / CARD_FADE_SPEED
   end
 end
 
-function Card:draw()
-  love.graphics.setColor(255, 255, 255)
+function Card:draw(castable)
+  if castable == nil then
+    castable = true
+  end
+
+  love.graphics.setColor(1, 1, 1)
+
+  -- draw card back
   if self.flip > 0.5 then
     love.graphics.draw(self.back, self.quad, S(self.x), S(self.y), self.angle, SCALE * 2 * (self.flip - 0.5), SCALE, self.ox, self.oy)
+
+  -- draw card face, faded for mana
   else
+    love.graphics.setColor(1 - 0.6 * self.fade, 1 - 0.6 * self.fade, 1 - 0.5 * self.fade)
     love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE * 2 * (0.5 - self.flip), SCALE, self.ox, self.oy)
   end
 end

@@ -114,7 +114,7 @@ function Overworld:update(top, dt)
   end
 
   for i, card in ipairs(self.deck) do
-    card:update()
+    card:update(self)
   end
 
   for i, card in ipairs(self.discard) do
@@ -137,6 +137,13 @@ function Overworld:update(top, dt)
     card.ty = card.ty + math.sin(angle) * depth
 
     card.angle = angle - math.pi / 2
+
+    if not card:castable(self) then
+      card.tfade = 1
+    else
+      card.tfade = 0
+    end
+
     card:update()
   end
 
@@ -182,7 +189,7 @@ function Overworld:draw(top)
   end
 
   for i, card in ipairs(self.hand) do
-    card:draw()
+    card:draw(card:castable(self))
   end
 
   for i, card in ipairs(self.deck) do
