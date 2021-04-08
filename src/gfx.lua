@@ -61,3 +61,24 @@ function load_gfx(id)
 
   return gfx[id]
 end
+
+
+Anim = Object:extend()
+
+function Anim:init(data)
+  self.data = data
+  self.frame = 1
+  self.fc = 0
+end
+
+function Anim:update()
+  self.fc = self.fc + 1
+  if self.fc >= (self.data.fpf or 1) then
+    self.fc = 0
+    self.frame = self.frame + 1
+    if self.frame > #self.data then
+      self.frame = self.data.loop or 1
+    end
+  end
+  return self.data[self.frame]
+end
