@@ -4,6 +4,11 @@ framesets = {
     num = 4,
   },
 
+  dummy = {
+    size = 25,
+    num = 7,
+  },
+
   map = {
     size = 16,
     num = 32,
@@ -19,6 +24,21 @@ atlas = {
   bare = {
     texture = "actor_bare",
     frameset = "actor",
+  },
+
+  dummy = {
+    texture = "actor_dummy",
+    frameset = "dummy",
+    anims = {
+      stand_down = {0, fpf=10},
+      walk_down = {0, 1, 2, 3, 4, 5, 6, fpf=6},
+      stand_up = {7},
+      walk_up = {7, 8, 9, 10, 11, 12, 13, fpf=6},
+      stand_left = {14},
+      walk_left = {14, 15, 16, 17, 18, 19, 20, fpf=6},
+      stand_right = {21},
+      walk_right = {21, 22, 23, 24, 25, 26, 27, fpf=6},
+    },
   },
 
   map = {

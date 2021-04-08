@@ -17,8 +17,24 @@ function Sprite:init(id)
   self.frame = 0
   self.visible = true
 
+  self.anim = nil
+  self.anim_table = nil
+  self.anims = atlas[id].anims
   self.gfx = load_gfx(atlas[id].texture)
   self.quads = load_quads(atlas[id].frameset)
+end
+
+function Sprite:update()
+  if self.anim then
+    self.frame = self.anim:update()
+  end
+end
+
+function Sprite:set_anim(anim_table)
+  if anim_table ~= self.anim_table then
+    self.anim_table = anim_table
+    self.anim = Anim(anim_table)
+  end
 end
 
 function Sprite:draw()
