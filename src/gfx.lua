@@ -8,6 +8,11 @@ framesets = {
     size = 16,
     num = 32,
   },
+
+  mana = {
+    size = 16,
+    num = 2,
+  },
 }
 
 atlas = {
@@ -20,6 +25,11 @@ atlas = {
     texture = "map",
     frameset = "map",
   },
+
+  mana = {
+    texture = "ui_mana",
+    frameset = "mana",
+  }
 }
 
 local gfx = {}

@@ -15,6 +15,10 @@ PLAYER_SPEED = 1
 MAX_HAND_SIZE = 5
 DECK_SIZE = 25
 
+-- mana config
+MAX_MANA = 5
+MANA_PARTS = 60
+
 -- state transition speed
 -- bigger is slower
 TRANSITION_SPEED = 4

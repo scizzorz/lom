@@ -31,10 +31,20 @@ function Overworld:init()
   self.map.x = -WIDTH / 2
   self.map.y = -HEIGHT / 2
 
+  self.max_mana = MAX_MANA * MANA_PARTS
+  self.mana = 2 * MANA_PARTS
   self.card_sel = 0
   self.hand = {}
   self.deck = {}
   self.discard = {}
+
+  self.ui_mana = {}
+  for n=1, (self.max_mana / MANA_PARTS) do
+    local crystal = Sprite("mana")
+    crystal.x = WIDTH / 2 - (crystal.size * self.max_mana / MANA_PARTS) / 2 + (n - 1) * crystal.size
+    crystal.y = HEIGHT / 2 + 18
+    table.insert(self.ui_mana, crystal)
+  end
 
   for n=1, DECK_SIZE do
     local card = Card(choose(library))
@@ -50,6 +60,7 @@ function Overworld:init()
   -- prep graphics so they don't jump during the transition state
   self.map:update()
   self:aim()
+  self:update_mana_ui()
 end
 
 function Overworld:aim()
@@ -71,8 +82,19 @@ function Overworld:aim()
   self.aiming.angle =  angle + math.pi / 2
 end
 
+function Overworld:update_mana_ui()
+  for i, crystal in ipairs(self.ui_mana) do
+    if i * MANA_PARTS > self.mana then
+      crystal.frame = 1
+    else
+      crystal.frame = 0
+    end
+  end
+end
+
 function Overworld:update(top, dt)
   self.map:update()
+  self:update_mana_ui()
 
   for i, card in ipairs(self.deck) do
     card:update()
@@ -136,6 +158,10 @@ function Overworld:draw(top)
   self.map:draw()
   self.bare:draw()
   self.aiming:draw()
+
+  for i, crystal in ipairs(self.ui_mana) do
+    crystal:draw()
+  end
 
   for i, card in ipairs(self.hand) do
     card:draw()
