@@ -21,9 +21,9 @@ function Overworld:init()
   local map_width = math.ceil(WIDTH / tile_size) + 2
   local map_height = math.ceil(HEIGHT / tile_size) + 2
 
-  self.bare = Sprite("bare")
-  self.bare.x = WIDTH / 2 - 8
-  self.bare.y = HEIGHT / 2 - 8
+  self.char = Sprite("dummy")
+  self.char.x = WIDTH / 2 - self.char.size / 2
+  self.char.y = HEIGHT / 2 - self.char.size / 2
 
   self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
 
@@ -77,12 +77,12 @@ function Overworld:aim()
   mx = s2p(mx - SCISSOR.x)
   my = s2p(my - SCISSOR.y)
 
-  -- finding bare center is annoying
-  self.aiming.x = self.bare.x + 8
-  self.aiming.y = self.bare.y + 8
+  -- finding char center is annoying
+  self.aiming.x = self.char.x + self.char.size / 2
+  self.aiming.y = self.char.y + self.char.size / 2
 
   -- lock angle to eighth-turns (pi / 4 radians)
-  local angle = math.angle(self.bare.x + 8, self.bare.y + 8, mx, my)
+  local angle = math.angle(self.char.x + self.char.size / 2, self.char.y + self.char.size / 2, mx, my)
   if AIMING_STEPS > 0 then
     local rnd = (2 * math.pi) / AIMING_STEPS
     angle = math.floor(angle / rnd + 0.5) * rnd
@@ -104,6 +104,7 @@ function Overworld:update(top, dt)
   self.map:update()
   self:update_mana_ui()
   self.ui_health:update(self.health)
+  self.char:update()
 
   if self.health < self.max_health then
     self.health = self.health + 1
@@ -153,16 +154,20 @@ function Overworld:update(top, dt)
   local dy = 0
 
   if love.keyboard.isDown(KEYBINDINGS.left) then
+    self.char:set_anim(self.char.anims.walk_left)
     dx = dx - 1
   end
   if love.keyboard.isDown(KEYBINDINGS.right) then
+    self.char:set_anim(self.char.anims.walk_right)
     dx = dx + 1
   end
 
   if love.keyboard.isDown(KEYBINDINGS.up) then
+    self.char:set_anim(self.char.anims.walk_up)
     dy = dy - 1
   end
   if love.keyboard.isDown(KEYBINDINGS.down) then
+    self.char:set_anim(self.char.anims.walk_down)
     dy = dy + 1
   end
 
@@ -180,7 +185,7 @@ end
 
 function Overworld:draw(top)
   self.map:draw()
-  self.bare:draw()
+  self.char:draw()
   self.aiming:draw()
   self.ui_health:draw()
 
@@ -306,38 +311,38 @@ function Overworld:move(x, y)
   local hspace = WIDTH / 3
   local vspace = HEIGHT / 3
 
-  -- move the bare
-  self.bare.x = self.bare.x + x
-  self.bare.y = self.bare.y + y
+  -- move the char
+  self.char.x = self.char.x + x
+  self.char.y = self.char.y + y
 
-  -- lock the bare within the center third of the screen by scrolling the map
-  -- inversely with the bare when he steps over the edge
+  -- lock the char within the center third of the screen by scrolling the map
+  -- inversely with the char when he steps over the edge
 
-  if self.bare.x < hspace then
-    self.map.x = self.map.x - (self.bare.x - hspace)
-    self.bare.x = hspace
+  if self.char.x < hspace then
+    self.map.x = self.map.x - (self.char.x - hspace)
+    self.char.x = hspace
   end
 
-  if self.bare.x > WIDTH - self.bare.size - hspace then
-    self.map.x = self.map.x - (self.bare.x - (WIDTH - self.bare.size - hspace))
-    self.bare.x = (WIDTH - self.bare.size - hspace)
+  if self.char.x > WIDTH - self.char.size - hspace then
+    self.map.x = self.map.x - (self.char.x - (WIDTH - self.char.size - hspace))
+    self.char.x = (WIDTH - self.char.size - hspace)
   end
 
-  if self.bare.y < vspace then
-    self.map.y = self.map.y - (self.bare.y - vspace)
-    self.bare.y = vspace
+  if self.char.y < vspace then
+    self.map.y = self.map.y - (self.char.y - vspace)
+    self.char.y = vspace
   end
 
-  if self.bare.y > HEIGHT - self.bare.size - vspace then
-    self.map.y = self.map.y - (self.bare.y - (HEIGHT - self.bare.size - vspace))
-    self.bare.y = (HEIGHT - self.bare.size - vspace)
+  if self.char.y > HEIGHT - self.char.size - vspace then
+    self.map.y = self.map.y - (self.char.y - (HEIGHT - self.char.size - vspace))
+    self.char.y = (HEIGHT - self.char.size - vspace)
   end
 
-  -- compute the tile under the bare
-  local sx = math.floor((self.bare.x - self.map.x_off) / self.map.tile_size)
-  local sy = math.floor((self.bare.y - self.map.y_off) / self.map.tile_size)
+  -- compute the tile under the char
+  local sx = math.floor((self.char.x - self.map.x_off) / self.map.tile_size)
+  local sy = math.floor((self.char.y - self.map.y_off) / self.map.tile_size)
 
-  -- check collision with the bare's top left, top right, bottom left, and
+  -- check collision with the char's top left, top right, bottom left, and
   -- bottom right corners, shifting his position appropriately
   self:collide(sx, sy)
   self:collide(sx, sy + 1)
@@ -346,9 +351,9 @@ function Overworld:move(x, y)
 end
 
 function Overworld:collide(x, y)
-  -- get the bare's position within the map
-  local bx = self.bare.x - self.map.x_off
-  local by = self.bare.y - self.map.y_off
+  -- get the char's position within the map
+  local bx = self.char.x - self.map.x_off
+  local by = self.char.y - self.map.y_off
 
   -- decide if the tile is blocked
   local blocked = self.map:get_blocked(self.map.x_start + x, self.map.y_start + y)
@@ -359,31 +364,31 @@ function Overworld:collide(x, y)
     local tx = x * self.map.tile_size
     local ty = y * self.map.tile_size
 
-    -- compute the bare's angle from the tile
+    -- compute the char's angle from the tile
     local dx = bx - tx
     local dy = by - ty
     local angle = math.atan2(dy, dx) / math.pi / 2
 
-    -- depending on the direction from the tile, shift the bare away from it
+    -- depending on the direction from the tile, shift the char away from it
 
-    -- bare is below
+    -- char is below
     if angle >= 1 / 8 and angle <= 3 / 8 then
-      self.bare.y = (y + 1) * self.map.tile_size + self.map.y_off
+      self.char.y = (y + 1) * self.map.tile_size + self.map.y_off
     end
 
-    -- bare is above
+    -- char is above
     if angle >= -3 / 8 and angle <= -1 / 8 then
-      self.bare.y = (y - 1) * self.map.tile_size + self.map.y_off
+      self.char.y = (y - 1) * self.map.tile_size + self.map.y_off
     end
 
-    -- bare is right
+    -- char is right
     if angle >= -1 / 8 and angle <= 1 / 8 then
-      self.bare.x = (x + 1) * self.map.tile_size + self.map.x_off
+      self.char.x = (x + 1) * self.map.tile_size + self.map.x_off
     end
 
-    -- bare is left
+    -- char is left
     if angle <= -3 / 8 or angle >= 3 / 8 then
-      self.bare.x = (x - 1) * self.map.tile_size + self.map.x_off
+      self.char.x = (x - 1) * self.map.tile_size + self.map.x_off
     end
   end
 end
