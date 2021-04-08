@@ -58,13 +58,13 @@ function HealthBar:update(cur)
 end
 
 function HealthBar:draw()
-  love.graphics.setColor(255, 255, 255)
-
   -- draw frame
+  love.graphics.setColor(1, 1, 1)
   love.graphics.draw(self.frame, self.frame_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 
   -- draw fill if we have some value
   if self.cur > 0 then
+    love.graphics.setColor(self.cur / self.max * 0.6 + 0.4, 0.1, 0.1)
     local width = math.max(1, math.floor(self.cur / self.max * 66))
     local fill_quad = love.graphics.newQuad(0, 0, width, 10, 66, 10)
     love.graphics.draw(self.fill, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
