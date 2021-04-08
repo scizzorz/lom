@@ -24,6 +24,7 @@ function Overworld:init()
   self.char = Sprite("dummy")
   self.char.x = WIDTH / 2 - self.char.size / 2
   self.char.y = HEIGHT / 2 - self.char.size / 2
+  self.char.dir = "down"
 
   self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
 
@@ -154,21 +155,33 @@ function Overworld:update(top, dt)
   local dy = 0
 
   if love.keyboard.isDown(KEYBINDINGS.left) then
-    self.char:set_anim(self.char.anims.walk_left)
     dx = dx - 1
   end
   if love.keyboard.isDown(KEYBINDINGS.right) then
-    self.char:set_anim(self.char.anims.walk_right)
     dx = dx + 1
   end
 
   if love.keyboard.isDown(KEYBINDINGS.up) then
-    self.char:set_anim(self.char.anims.walk_up)
     dy = dy - 1
   end
   if love.keyboard.isDown(KEYBINDINGS.down) then
-    self.char:set_anim(self.char.anims.walk_down)
     dy = dy + 1
+  end
+
+  if dy == 0 then
+    if dx < 0 then
+      self.char.dir = "left"
+    elseif dx > 0 then
+      self.char.dir = "right"
+    end
+  end
+
+  if dx == 0 then
+    if dy < 0 then
+      self.char.dir = "up"
+    elseif dy > 0 then
+      self.char.dir = "down"
+    end
   end
 
   -- diagonal movement should be slower
@@ -178,6 +191,9 @@ function Overworld:update(top, dt)
 
   if dx ~= 0 or dy ~= 0 then
     self:move(dx * ds, dy * ds)
+    self.char:set_anim(self.char.anims["walk_" .. self.char.dir])
+  else
+    self.char:set_anim(self.char.anims["stand_" .. self.char.dir])
   end
 
   self:aim()
