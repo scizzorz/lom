@@ -11,4 +11,16 @@ card_db = {
     art = "card_throw_shield",
     cost = 2,
   },
+
+  hammer_beam = {
+    name = "Hammer Beam",
+    art = "card_hammer_beam",
+    cost = 1,
+  },
+
+  shield_beam = {
+    name = "Shield Beam",
+    art = "card_shield_beam",
+    cost = 1,
+  },
 }
