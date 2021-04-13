@@ -18,37 +18,29 @@ end
 function Overworld:init()
   self.world = love.physics.newWorld(0, 0, true)
 
-  self.box = {}
-  self.box.body = love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 + 25)
-  self.box.shape = love.physics.newRectangleShape(25, 25)
-  self.box.shape = love.physics.newPolygonShape(
-    0, 0,
-    25, 0,
-    25, 25,
-    -25, 25
-  )
-  self.box.fixture = love.physics.newFixture(self.box.body, self.box.shape)
-
-  self.ball = {}
-  self.ball.body = love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 - 25, "dynamic")
-  self.ball.shape = love.physics.newCircleShape(12.5)
-  self.ball.fixture = love.physics.newFixture(self.ball.body, self.ball.shape, 1)
-
   local map_size = 240
   local tile_size = 16
   local map_width = math.ceil(WIDTH / tile_size) + 2
   local map_height = math.ceil(HEIGHT / tile_size) + 2
 
-  self.char = Sprite("dummy")
-  self.char.x = WIDTH / 2 - self.char.size / 2
-  self.char.y = HEIGHT / 2 - self.char.size / 2
+  self.char = Char(self.world, 8, Sprite("dummy"))
+  self.char.sprite.ox = 13
+  self.char.sprite.oy = 19
+  self.char.body:setX(WIDTH / 2)
+  self.char.body:setY(HEIGHT / 2)
   self.char.dir = "down"
 
   self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
 
-  self.map = World("map", map_width, map_height, map_size)
-  self.map.x = -WIDTH / 2
-  self.map.y = -HEIGHT / 2
+  self.map = Map(self.world, {
+    {0, 0, 25, 0, 25, 225, 0, 225},
+    {375, 0, 400, 0, 400, 225, 375, 225},
+    {25, 0, 375, 0, 375, 25, 25, 25},
+    {25, 200, 375, 200, 375, 225, 25, 225},
+    {50, 50, 75, 50, 75, 75},
+    {75, 75, 100, 50, 75, 50},
+    {350, 200, 375, 175, 375, 200},
+  })
 
   self.max_mana = MAX_MANA * MANA_PARTS
   self.mana = 0
@@ -97,8 +89,8 @@ function Overworld:aim()
   my = s2p(my - SCISSOR.y)
 
   -- finding char center is annoying
-  self.aiming.x = self.char.x + self.char.size / 2
-  self.aiming.y = self.char.y + self.char.size / 2
+  self.aiming.x = self.char.x + self.char.size
+  self.aiming.y = self.char.y + self.char.size
 
   -- lock angle to eighth-turns (pi / 4 radians)
   local angle = math.angle(self.char.x + self.char.size / 2, self.char.y + self.char.size / 2, mx, my)
@@ -211,9 +203,9 @@ function Overworld:update(top, dt)
 
   self:move(dx * ds, dy * ds)
   if dx ~= 0 or dy ~= 0 then
-    self.char:set_anim(self.char.anims["walk_" .. self.char.dir])
+    self.char.sprite:set_anim(self.char.sprite.anims["walk_" .. self.char.dir])
   else
-    self.char:set_anim(self.char.anims["stand_" .. self.char.dir])
+    self.char.sprite:set_anim(self.char.sprite.anims["stand_" .. self.char.dir])
   end
 
   self:aim()
@@ -222,7 +214,7 @@ end
 function Overworld:draw(top)
   self.map:draw()
   self.char:draw()
-  self.aiming:draw()
+  -- self.aiming:draw()
   self.ui_health:draw()
 
   for i, crystal in ipairs(self.ui_mana) do
@@ -240,12 +232,6 @@ function Overworld:draw(top)
   for i, card in ipairs(self.discard) do
     card:draw()
   end
-
-  love.graphics.setColor(1, 1, 1, 0.5)
-  self:draw_physics_rect(self.box)
-
-  love.graphics.setColor(1, 0.5, 0.5, 1)
-  self:draw_physics_circ(self.ball)
 end
 
 function Overworld:draw_physics_circ(f)
@@ -362,48 +348,5 @@ function Overworld:wheelmoved(top, x, y)
 end
 
 function Overworld:move(x, y)
-  self.ball.body:setLinearVelocity(x * 60, y * 60)
-end
-
-function Overworld:collide(x, y)
-  -- get the char's position within the map
-  local bx = self.char.x - self.map.x_off
-  local by = self.char.y - self.map.y_off
-
-  -- decide if the tile is blocked
-  local blocked = self.map:get_blocked(self.map.x_start + x, self.map.y_start + y)
-
-  if blocked then
-
-    -- compute the tile's coordinates within the map
-    local tx = x * self.map.tile_size
-    local ty = y * self.map.tile_size
-
-    -- compute the char's angle from the tile
-    local dx = bx - tx
-    local dy = by - ty
-    local angle = math.atan2(dy, dx) / math.pi / 2
-
-    -- depending on the direction from the tile, shift the char away from it
-
-    -- char is below
-    if angle >= 1 / 8 and angle <= 3 / 8 then
-      self.char.y = (y + 1) * self.map.tile_size + self.map.y_off
-    end
-
-    -- char is above
-    if angle >= -3 / 8 and angle <= -1 / 8 then
-      self.char.y = (y - 1) * self.map.tile_size + self.map.y_off
-    end
-
-    -- char is right
-    if angle >= -1 / 8 and angle <= 1 / 8 then
-      self.char.x = (x + 1) * self.map.tile_size + self.map.x_off
-    end
-
-    -- char is left
-    if angle <= -3 / 8 or angle >= 3 / 8 then
-      self.char.x = (x - 1) * self.map.tile_size + self.map.x_off
-    end
-  end
+  self.char.body:setLinearVelocity(x * 60, y * 60)
 end
