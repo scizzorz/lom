@@ -16,19 +16,23 @@ function choose(from)
 end
 
 function Overworld:init()
-  self.world = love.physics.newWorld(0, 100, true)
+  self.world = love.physics.newWorld(0, 0, true)
 
-  self.box = {
-    body=love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 + 25),
-    shape=love.physics.newRectangleShape(25, 25),
-  }
+  self.box = {}
+  self.box.body = love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 + 25)
+  self.box.shape = love.physics.newRectangleShape(25, 25)
+  self.box.shape = love.physics.newPolygonShape(
+    0, 0,
+    25, 0,
+    25, 25,
+    -25, 25
+  )
   self.box.fixture = love.physics.newFixture(self.box.body, self.box.shape)
 
   self.ball = {}
   self.ball.body = love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 - 25, "dynamic")
   self.ball.shape = love.physics.newCircleShape(12.5)
   self.ball.fixture = love.physics.newFixture(self.ball.body, self.ball.shape, 1)
-  self.ball.fixture:setRestitution(0.8)
 
   local map_size = 240
   local tile_size = 16
@@ -166,7 +170,7 @@ function Overworld:update(top, dt)
   end
 
   -- handle movement
-  local ds = dt * 60 * PLAYER_SPEED
+  local ds = PLAYER_SPEED
   local dx = 0
   local dy = 0
 
@@ -205,8 +209,8 @@ function Overworld:update(top, dt)
     ds = ds / math.sqrt(2)
   end
 
+  self:move(dx * ds, dy * ds)
   if dx ~= 0 or dy ~= 0 then
-    self:move(dx * ds, dy * ds)
     self.char:set_anim(self.char.anims["walk_" .. self.char.dir])
   else
     self.char:set_anim(self.char.anims["stand_" .. self.char.dir])
@@ -358,46 +362,7 @@ function Overworld:wheelmoved(top, x, y)
 end
 
 function Overworld:move(x, y)
-  local hspace = WIDTH / 3
-  local vspace = HEIGHT / 3
-
-  -- move the char
-  self.char.x = self.char.x + x
-  self.char.y = self.char.y + y
-
-  -- lock the char within the center third of the screen by scrolling the map
-  -- inversely with the char when he steps over the edge
-
-  if self.char.x < hspace then
-    self.map.x = self.map.x - (self.char.x - hspace)
-    self.char.x = hspace
-  end
-
-  if self.char.x > WIDTH - self.char.size - hspace then
-    self.map.x = self.map.x - (self.char.x - (WIDTH - self.char.size - hspace))
-    self.char.x = (WIDTH - self.char.size - hspace)
-  end
-
-  if self.char.y < vspace then
-    self.map.y = self.map.y - (self.char.y - vspace)
-    self.char.y = vspace
-  end
-
-  if self.char.y > HEIGHT - self.char.size - vspace then
-    self.map.y = self.map.y - (self.char.y - (HEIGHT - self.char.size - vspace))
-    self.char.y = (HEIGHT - self.char.size - vspace)
-  end
-
-  -- compute the tile under the char
-  local sx = math.floor((self.char.x - self.map.x_off) / self.map.tile_size)
-  local sy = math.floor((self.char.y - self.map.y_off) / self.map.tile_size)
-
-  -- check collision with the char's top left, top right, bottom left, and
-  -- bottom right corners, shifting his position appropriately
-  self:collide(sx, sy)
-  self:collide(sx, sy + 1)
-  self:collide(sx + 1, sy)
-  self:collide(sx + 1, sy + 1)
+  self.ball.body:setLinearVelocity(x * 60, y * 60)
 end
 
 function Overworld:collide(x, y)
