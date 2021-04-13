@@ -32,7 +32,7 @@ function Overworld:init()
 
   self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
 
-  self.map = Map(self.world, {
+  self.map = Map(self.world, "map_arena", 400, 225, {
     {0, 0, 25, 0, 25, 225, 0, 225},
     {375, 0, 400, 0, 400, 225, 375, 225},
     {25, 0, 375, 0, 375, 25, 25, 25},
@@ -40,6 +40,7 @@ function Overworld:init()
     {50, 50, 75, 50, 75, 75},
     {75, 75, 100, 50, 75, 50},
     {350, 200, 375, 175, 375, 200},
+    {100, 100, 125, 100, 125, 125, 100, 125},
   })
 
   self.max_mana = MAX_MANA * MANA_PARTS

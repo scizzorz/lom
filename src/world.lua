@@ -5,9 +5,11 @@ require("util")
 
 Map = Object:extend()
 
-function Map:init(world, polies)
+function Map:init(world, tex, width, height, polies)
   self.world = world
   self.polies = polies
+  self.tex = load_gfx(tex)
+  self.quad = love.graphics.newQuad(0, 0, width, height, width, height)
 
   self.body = love.physics.newBody(self.world, 0, 0)
   self.shapes = {}
@@ -25,6 +27,9 @@ function Map:update(dt)
 end
 
 function Map:draw()
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.draw(self.tex, self.quad, S(0), S(0), 0, SCALE, SCALE)
+
   love.graphics.setColor(1, 0, 0, 0.5)
   for i, shape in ipairs(self.shapes) do
     self:draw_shape(shape)
