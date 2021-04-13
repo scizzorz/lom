@@ -16,6 +16,20 @@ function choose(from)
 end
 
 function Overworld:init()
+  self.world = love.physics.newWorld(0, 100, true)
+
+  self.box = {
+    body=love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 + 25),
+    shape=love.physics.newRectangleShape(25, 25),
+  }
+  self.box.fixture = love.physics.newFixture(self.box.body, self.box.shape)
+
+  self.ball = {}
+  self.ball.body = love.physics.newBody(self.world, WIDTH / 2, HEIGHT / 2 - 25, "dynamic")
+  self.ball.shape = love.physics.newCircleShape(12.5)
+  self.ball.fixture = love.physics.newFixture(self.ball.body, self.ball.shape, 1)
+  self.ball.fixture:setRestitution(0.8)
+
   local map_size = 240
   local tile_size = 16
   local map_width = math.ceil(WIDTH / tile_size) + 2
@@ -102,6 +116,8 @@ function Overworld:update_mana_ui()
 end
 
 function Overworld:update(top, dt)
+  self.world:update(dt)
+
   self.map:update()
   self:update_mana_ui()
   self.ui_health:update(self.health)
@@ -220,6 +236,24 @@ function Overworld:draw(top)
   for i, card in ipairs(self.discard) do
     card:draw()
   end
+
+  love.graphics.setColor(1, 1, 1, 0.5)
+  self:draw_physics_rect(self.box)
+
+  love.graphics.setColor(1, 0.5, 0.5, 1)
+  self:draw_physics_circ(self.ball)
+end
+
+function Overworld:draw_physics_circ(f)
+  love.graphics.circle("fill", S(f.body:getX()), S(f.body:getY()), S(f.shape:getRadius()))
+end
+
+function Overworld:draw_physics_rect(f)
+  local points = {f.body:getWorldPoints(f.shape:getPoints())}
+  for k, v in ipairs(points) do
+    points[k] = S(v)
+  end
+  love.graphics.polygon("fill", points)
 end
 
 function Overworld:keypressed(top, key)
