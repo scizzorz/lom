@@ -5,7 +5,7 @@ require("util")
 
 Sprite = Object:extend()
 
-function Sprite:init(id)
+function Sprite:init(data)
   self.x = 0
   self.y = 0
   self.sx = 1
@@ -17,22 +17,34 @@ function Sprite:init(id)
 
   self.anim = nil
 
-  self.atlas = atlas[id]
-  self.tex = load_texture(atlas[id].texture)
-  self.quad = build_quad(self.atlas.frameset, self.frame)
+  self.data = data
+  self.tex = load_texture(self.data.texture)
+  self.quad = build_quad(self.data.frameset, self.frame)
+end
+
+function Sprite:set_frame(to)
+  if to ~= self.frame then
+    self.frame = to
+    self.quad = build_quad(self.data.frameset, self.frame)
+  end
 end
 
 function Sprite:update()
   if self.anim then
-    self.frame = self.anim:update()
+    self:set_frame(self.anim:update())
   end
-  self.quad = build_quad(self.atlas.frameset, self.frame)
 end
 
 function Sprite:set_anim(label)
-  local anim_table = self.atlas.anims[label]
+  if self.data.anims == nil then
+    print("Attempting to set animation to " .. tostring(label))
+  end
+
+
+  local anim_table = self.data.anims[label]
   if (self.anim == nil) or (anim_table ~= self.anim.data) then
     self.anim = Anim(anim_table)
+    self:set_frame(self.anim:cur())
   end
 end
 
@@ -46,7 +58,7 @@ end
 
 HealthBar = Object:extend()
 
-function HealthBar:init(cur, max)
+function HealthBar:init(cur, max, border_data, fill_data)
   self.cur = cur or 50
   self.max = max or 100
   self.x = 0
@@ -58,12 +70,12 @@ function HealthBar:init(cur, max)
   self.ox = 0
   self.oy = 0
   self.angle = 0
-  self.delay = 0
 
-  self.frame = load_texture("ui_health_frame")
-  self.frame_quad = love.graphics.newQuad(0, 0, 80, 16, 80, 16)
+  self.border_tex = load_texture(border_data.texture)
+  self.border_quad = build_quad(border_data.frameset, 0)
 
-  self.fill = load_texture("ui_health_fill")
+  self.fill_data = fill_data
+  self.fill_tex = load_texture(fill_data.texture)
 end
 
 function HealthBar:update(cur)
@@ -71,16 +83,16 @@ function HealthBar:update(cur)
 end
 
 function HealthBar:draw()
-  -- draw frame
+  -- draw border
   love.graphics.setColor(1, 1, 1)
-  love.graphics.draw(self.frame, self.frame_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
+  love.graphics.draw(self.border_tex, self.border_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 
   -- draw fill if we have some value
   if self.cur > 0 then
     love.graphics.setColor(self.cur / self.max * 0.6 + 0.4, 0.1, 0.1)
     local width = math.max(1, math.floor(self.cur / self.max * 66))
     local fill_quad = love.graphics.newQuad(0, 0, width, 10, 66, 10)
-    love.graphics.draw(self.fill, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
+    love.graphics.draw(self.fill_tex, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
   end
 end
 

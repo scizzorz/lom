@@ -1,4 +1,5 @@
 require("data")
+require("gfx")
 require("sprite")
 require("util")
 require("world")
@@ -23,7 +24,7 @@ function Overworld:init()
   local map_width = math.ceil(WIDTH / tile_size) + 2
   local map_height = math.ceil(HEIGHT / tile_size) + 2
 
-  self.char = Char(self.world, 8, Sprite("dummy"))
+  self.char = Char(self.world, 8, Sprite(atlas.dummy))
   self.char.sprite.ox = 13
   self.char.sprite.oy = 19
   self.char.body:setX(WIDTH / 2)
@@ -54,14 +55,14 @@ function Overworld:init()
   self.deck = {}
   self.discard = {}
 
-  self.ui_health = HealthBar(self.health, self.max_health)
+  self.ui_health = HealthBar(self.health, self.max_health, atlas.ui_health_frame, atlas.ui_health_fill)
   self.ui_health.x = 0
   self.ui_health.y = 0
 
   self.ui_mana = {}
   for n=1, (self.max_mana / MANA_PARTS) do
-    local crystal = Sprite("mana")
-    crystal.x = (n - 1) * crystal.atlas.frameset.tile_width
+    local crystal = Sprite(atlas.mana)
+    crystal.x = (n - 1) * crystal.data.frameset.tile_width
     crystal.y = 16
     table.insert(self.ui_mana, crystal)
   end
@@ -105,10 +106,11 @@ end
 function Overworld:update_mana_ui()
   for i, crystal in ipairs(self.ui_mana) do
     if i * MANA_PARTS > self.mana then
-      crystal.frame = 1
+      crystal:set_anim("empty")
     else
-      crystal.frame = 0
+      crystal:set_anim("filled")
     end
+    crystal:update()
   end
 end
 
