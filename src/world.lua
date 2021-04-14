@@ -8,7 +8,7 @@ Map = Object:extend()
 function Map:init(world, tex, width, height, polies)
   self.world = world
   self.polies = polies
-  self.tex = load_gfx(tex)
+  self.tex = load_texture(tex)
   self.quad = love.graphics.newQuad(0, 0, width, height, width, height)
 
   self.body = love.physics.newBody(self.world, 0, 0)

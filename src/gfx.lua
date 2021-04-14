@@ -1,34 +1,23 @@
 framesets = {
-  actor = {
-    size = 16,
-    num = 4,
-  },
-
   dummy = {
-    size = 25,
-    num = 7,
-  },
-
-  map = {
-    size = 16,
-    num = 32,
+    tile_width = 25,
+    tile_height = 25,
+    tex_width = 175,
+    tex_height = 100,
   },
 
   mana = {
-    size = 16,
-    num = 2,
+    tile_width = 16,
+    tile_height = 16,
+    tex_width = 32,
+    tex_height = 16,
   },
 }
 
 atlas = {
-  bare = {
-    texture = "actor_bare",
-    frameset = "actor",
-  },
-
   dummy = {
     texture = "actor_dummy",
-    frameset = "dummy",
+    frameset = framesets.dummy,
     anims = {
       stand_down = {0},
       walk_down = {0, 1, 2, 3, 4, 5, 6, fps=10},
@@ -41,45 +30,29 @@ atlas = {
     },
   },
 
-  map = {
-    texture = "map",
-    frameset = "map",
-  },
-
   mana = {
     texture = "ui_mana",
-    frameset = "mana",
+    frameset = framesets.mana,
   }
 }
 
-local gfx = {}
+local textures = {}
 
 local quads = {}
 
-function load_quads(id)
-  if quads[id] == nil then
-    print("loading quads: " .. id)
-    quads[id] = {}
-
-    local num = framesets[id].num
-    local size = framesets[id].size
-    for x = 0, num - 1 do
-      for y = 0, num - 1 do
-        quads[id][y*num + x] = love.graphics.newQuad(size * x, size * y, size, size, size*num, size*num)
-      end
-    end
-  end
-
-  return quads[id]
+function build_quad(frameset, frame)
+  local x = (frame * frameset.tile_width) % frameset.tex_width
+  local y = math.floor(frame * frameset.tile_width / frameset.tex_width) * frameset.tile_height
+  return love.graphics.newQuad(x, y, frameset.tile_width, frameset.tile_height, frameset.tex_width, frameset.tex_height)
 end
 
-function load_gfx(id)
-  if gfx[id] == nil then
-    print("loading gfx: " .. id)
-    gfx[id] = love.graphics.newImage("gfx/" .. id .. ".png")
+function load_texture(id)
+  if textures[id] == nil then
+    print("loading tex: " .. id)
+    textures[id] = love.graphics.newImage("gfx/" .. id .. ".png")
   end
 
-  return gfx[id]
+  return textures[id]
 end
 
 

@@ -8,43 +8,40 @@ Sprite = Object:extend()
 function Sprite:init(id)
   self.x = 0
   self.y = 0
-  self.size = framesets[atlas[id].frameset].size
   self.sx = 1
   self.sy = 1
   self.ox = 0
   self.oy = 0
   self.angle = 0
   self.frame = 0
-  self.visible = true
 
   self.anim = nil
-  self.anim_table = nil
-  self.anims = atlas[id].anims
-  self.gfx = load_gfx(atlas[id].texture)
-  self.quads = load_quads(atlas[id].frameset)
+
+  self.atlas = atlas[id]
+  self.tex = load_texture(atlas[id].texture)
+  self.quad = build_quad(self.atlas.frameset, self.frame)
 end
 
 function Sprite:update()
   if self.anim then
     self.frame = self.anim:update()
   end
+  self.quad = build_quad(self.atlas.frameset, self.frame)
 end
 
-function Sprite:set_anim(anim_table)
-  if anim_table ~= self.anim_table then
-    self.anim_table = anim_table
+function Sprite:set_anim(label)
+  local anim_table = self.atlas.anims[label]
+  if (self.anim == nil) or (anim_table ~= self.anim.data) then
     self.anim = Anim(anim_table)
   end
 end
 
 function Sprite:draw()
-  if self.visible then
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(self.gfx, self.quads[self.frame],
-                      S(self.x), S(self.y), self.angle,
-                      SCALE * self.sx, SCALE * self.sy,
-                      self.ox, self.oy)
-  end
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.draw(self.tex, self.quad,
+                    S(self.x), S(self.y), self.angle,
+                    SCALE * self.sx, SCALE * self.sy,
+                    self.ox, self.oy)
 end
 
 HealthBar = Object:extend()
@@ -63,10 +60,10 @@ function HealthBar:init(cur, max)
   self.angle = 0
   self.delay = 0
 
-  self.frame = load_gfx("ui_health_frame")
+  self.frame = load_texture("ui_health_frame")
   self.frame_quad = love.graphics.newQuad(0, 0, 80, 16, 80, 16)
 
-  self.fill = load_gfx("ui_health_fill")
+  self.fill = load_texture("ui_health_fill")
 end
 
 function HealthBar:update(cur)
@@ -109,8 +106,8 @@ function Card:init(id)
   self.tfade = 0
 
   self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
-  self.tex = load_gfx(self.data.art)
-  self.back = load_gfx("card_back")
+  self.tex = load_texture(self.data.art)
+  self.back = load_texture("card_back")
 end
 
 function Card:update()
@@ -154,7 +151,7 @@ end
 Aiming = Object:extend()
 
 function Aiming:init(tex, w, h, ox, oy)
-  self.tex = load_gfx(tex)
+  self.tex = load_texture(tex)
   self.w = w
   self.h = h
   self.ox = ox

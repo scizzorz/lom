@@ -61,7 +61,7 @@ function Overworld:init()
   self.ui_mana = {}
   for n=1, (self.max_mana / MANA_PARTS) do
     local crystal = Sprite("mana")
-    crystal.x = (n - 1) * crystal.size
+    crystal.x = (n - 1) * crystal.atlas.frameset.tile_width
     crystal.y = 16
     table.insert(self.ui_mana, crystal)
   end
@@ -90,8 +90,8 @@ function Overworld:aim()
   my = s2p(my - SCISSOR.y)
 
   -- finding char center is annoying
-  self.aiming.x = self.char.x + self.char.size
-  self.aiming.y = self.char.y + self.char.size
+  -- self.aiming.x = self.char.x + self.char.size
+  -- self.aiming.y = self.char.y + self.char.size
 
   -- lock angle to eighth-turns (pi / 4 radians)
   local angle = math.angle(self.char.x + self.char.size / 2, self.char.y + self.char.size / 2, mx, my)
@@ -204,9 +204,9 @@ function Overworld:update(top, dt)
 
   self:move(dx * ds, dy * ds)
   if dx ~= 0 or dy ~= 0 then
-    self.char.sprite:set_anim(self.char.sprite.anims["walk_" .. self.char.dir])
+    self.char.sprite:set_anim("walk_" .. self.char.dir)
   else
-    self.char.sprite:set_anim(self.char.sprite.anims["stand_" .. self.char.dir])
+    self.char.sprite:set_anim("stand_" .. self.char.dir)
   end
 
   self:aim()
