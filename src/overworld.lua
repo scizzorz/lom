@@ -82,6 +82,7 @@ function Overworld:init()
   self.map:update()
   self:aim()
   self:update_mana_ui()
+  self:draw_hand()
 end
 
 function Overworld:aim()
@@ -124,10 +125,6 @@ function Overworld:update(top, dt)
 
   if self.health < self.max_health then
     self.health = self.health + 1
-  end
-
-  if self.mana < self.max_mana then
-    self.mana = self.mana + 1
   end
 
   for i, card in ipairs(self.deck) do
@@ -284,26 +281,64 @@ function Overworld:draw_card()
   if self.card_sel == 0 then
     self.card_sel = 1
   end
+end
 
-  if #self.deck == 0 then
-    self:reshuffle()
+function Overworld:discard_card(card)
+  card.angle = 0
+  card.tx = 0
+  card.ty = HEIGHT - (#self.discard + 1) * DECK_SPACING + DECK_DEPTH
+
+  for i, hand_card in ipairs(self.hand) do
+    if card == hand_card then
+      table.remove(self.hand, i)
+      break
+    end
   end
+
+  if self.card_sel > #self.hand then
+    self.card_sel = #self.hand
+  end
+
+  table.insert(self.discard, card)
 end
 
 function Overworld:use_card()
   local card = self.hand[self.card_sel]
   if card and card:castable(self) then
     card:cast(self)
-    card.angle = 0
-    card.tx = 0
-    card.ty = HEIGHT - (#self.discard + 1) * DECK_SPACING + DECK_DEPTH
-
-    table.remove(self.hand, self.card_sel)
-    if self.card_sel > #self.hand then
-      self.card_sel = #self.hand
+    self:discard_card(card)
+    if self:ready_for_hand() then
+      self:draw_hand()
     end
+  end
+end
 
-    table.insert(self.discard, card)
+function Overworld:ready_for_hand()
+  for i, card in ipairs(self.hand) do
+    if card:castable(self) then
+      return false
+    end
+  end
+
+  return true
+end
+
+function Overworld:draw_hand()
+  self.mana = self.max_mana
+
+  -- discard hand
+  while #self.hand > 0 do
+    self:discard_card(self.hand[1])
+  end
+
+  -- reshuffle if we need to
+  if #self.deck == 0 then
+    self:reshuffle()
+  end
+
+  -- draw a new hand
+  while #self.hand < MAX_HAND_SIZE do
+    self:draw_card()
   end
 end
 
@@ -325,7 +360,6 @@ end
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
-    self:draw_card()
   end
 
   -- right
