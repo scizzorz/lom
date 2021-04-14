@@ -265,7 +265,7 @@ end
 
 function Overworld:use_card()
   local card = self.hand[self.card_sel]
-  if card:castable(self) then
+  if card and card:castable(self) then
     card:cast(self)
     card.angle = 0
     card.tx = 0
