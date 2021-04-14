@@ -30,14 +30,14 @@ atlas = {
     texture = "actor_dummy",
     frameset = "dummy",
     anims = {
-      stand_down = {0, fpf=10},
-      walk_down = {0, 1, 2, 3, 4, 5, 6, fpf=6},
+      stand_down = {0},
+      walk_down = {0, 1, 2, 3, 4, 5, 6, fps=10},
       stand_up = {7},
-      walk_up = {7, 8, 9, 10, 11, 12, 13, fpf=6},
+      walk_up = {7, 8, 9, 10, 11, 12, 13, fps=10},
       stand_left = {14},
-      walk_left = {14, 15, 16, 17, 18, 19, 20, fpf=6},
+      walk_left = {14, 15, 16, 17, 18, 19, 20, fps=10},
       stand_right = {21},
-      walk_right = {21, 22, 23, 24, 25, 26, 27, fpf=6},
+      walk_right = {21, 22, 23, 24, 25, 26, 27, fps=10},
     },
   },
 
@@ -93,7 +93,7 @@ end
 
 function Anim:update()
   self.fc = self.fc + 1
-  if self.fc >= (self.data.fpf or 1) then
+  if self.fc >= math.ceil(60 / (self.data.fps or 60)) then
     self.fc = 0
     self.frame = self.frame + 1
     if self.frame > #self.data then

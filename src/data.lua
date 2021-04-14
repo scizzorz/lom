@@ -1,4 +1,3 @@
-
 card_db = {
   throw_weapon = {
     name = "Throw Weapon",
