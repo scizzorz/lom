@@ -45,6 +45,8 @@ function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
   love.graphics.setLineStyle("rough")
 
+  love.physics.setMeter(25)
+
   ENGINE = Engine()
   OVERWORLD = Overworld()
   ENGINE:push_state(OVERWORLD)

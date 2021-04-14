@@ -1,4 +1,5 @@
 require("data")
+require("gfx")
 require("sprite")
 require("util")
 require("world")
@@ -16,21 +17,32 @@ function choose(from)
 end
 
 function Overworld:init()
+  self.world = love.physics.newWorld(0, 0, true)
+
   local map_size = 240
   local tile_size = 16
   local map_width = math.ceil(WIDTH / tile_size) + 2
   local map_height = math.ceil(HEIGHT / tile_size) + 2
 
-  self.char = Sprite("dummy")
-  self.char.x = WIDTH / 2 - self.char.size / 2
-  self.char.y = HEIGHT / 2 - self.char.size / 2
+  self.char = Char(self.world, 8, Sprite(atlas.dummy))
+  self.char.sprite.ox = 13
+  self.char.sprite.oy = 19
+  self.char.body:setX(WIDTH / 2)
+  self.char.body:setY(HEIGHT / 2)
   self.char.dir = "down"
 
   self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
 
-  self.map = World("map", map_width, map_height, map_size)
-  self.map.x = -WIDTH / 2
-  self.map.y = -HEIGHT / 2
+  self.map = Map(self.world, "map_arena", 400, 225, {
+    {0, 0, 25, 0, 25, 225, 0, 225},
+    {375, 0, 400, 0, 400, 225, 375, 225},
+    {25, 0, 375, 0, 375, 25, 25, 25},
+    {25, 200, 375, 200, 375, 225, 25, 225},
+    {50, 50, 75, 50, 75, 75},
+    {75, 75, 100, 50, 75, 50},
+    {350, 200, 375, 175, 375, 200},
+    {100, 100, 125, 100, 125, 125, 100, 125},
+  })
 
   self.max_mana = MAX_MANA * MANA_PARTS
   self.mana = 0
@@ -43,14 +55,14 @@ function Overworld:init()
   self.deck = {}
   self.discard = {}
 
-  self.ui_health = HealthBar(self.health, self.max_health)
+  self.ui_health = HealthBar(self.health, self.max_health, atlas.ui_health_frame, atlas.ui_health_fill)
   self.ui_health.x = 0
   self.ui_health.y = 0
 
   self.ui_mana = {}
   for n=1, (self.max_mana / MANA_PARTS) do
-    local crystal = Sprite("mana")
-    crystal.x = (n - 1) * crystal.size
+    local crystal = Sprite(atlas.mana)
+    crystal.x = (n - 1) * crystal.data.frameset.tile_width
     crystal.y = 16
     table.insert(self.ui_mana, crystal)
   end
@@ -70,6 +82,7 @@ function Overworld:init()
   self.map:update()
   self:aim()
   self:update_mana_ui()
+  self:draw_hand()
 end
 
 function Overworld:aim()
@@ -79,8 +92,8 @@ function Overworld:aim()
   my = s2p(my - SCISSOR.y)
 
   -- finding char center is annoying
-  self.aiming.x = self.char.x + self.char.size / 2
-  self.aiming.y = self.char.y + self.char.size / 2
+  -- self.aiming.x = self.char.x + self.char.size
+  -- self.aiming.y = self.char.y + self.char.size
 
   -- lock angle to eighth-turns (pi / 4 radians)
   local angle = math.angle(self.char.x + self.char.size / 2, self.char.y + self.char.size / 2, mx, my)
@@ -94,14 +107,17 @@ end
 function Overworld:update_mana_ui()
   for i, crystal in ipairs(self.ui_mana) do
     if i * MANA_PARTS > self.mana then
-      crystal.frame = 1
+      crystal:set_anim("empty")
     else
-      crystal.frame = 0
+      crystal:set_anim("filled")
     end
+    crystal:update()
   end
 end
 
 function Overworld:update(top, dt)
+  self.world:update(dt)
+
   self.map:update()
   self:update_mana_ui()
   self.ui_health:update(self.health)
@@ -109,10 +125,6 @@ function Overworld:update(top, dt)
 
   if self.health < self.max_health then
     self.health = self.health + 1
-  end
-
-  if self.mana < self.max_mana then
-    self.mana = self.mana + 1
   end
 
   for i, card in ipairs(self.deck) do
@@ -150,7 +162,7 @@ function Overworld:update(top, dt)
   end
 
   -- handle movement
-  local ds = dt * 60 * PLAYER_SPEED
+  local ds = PLAYER_SPEED
   local dx = 0
   local dy = 0
 
@@ -189,11 +201,11 @@ function Overworld:update(top, dt)
     ds = ds / math.sqrt(2)
   end
 
+  self:move(dx * ds, dy * ds)
   if dx ~= 0 or dy ~= 0 then
-    self:move(dx * ds, dy * ds)
-    self.char:set_anim(self.char.anims["walk_" .. self.char.dir])
+    self.char.sprite:set_anim("walk_" .. self.char.dir)
   else
-    self.char:set_anim(self.char.anims["stand_" .. self.char.dir])
+    self.char.sprite:set_anim("stand_" .. self.char.dir)
   end
 
   self:aim()
@@ -202,7 +214,7 @@ end
 function Overworld:draw(top)
   self.map:draw()
   self.char:draw()
-  self.aiming:draw()
+  -- self.aiming:draw()
   self.ui_health:draw()
 
   for i, crystal in ipairs(self.ui_mana) do
@@ -220,6 +232,18 @@ function Overworld:draw(top)
   for i, card in ipairs(self.discard) do
     card:draw()
   end
+end
+
+function Overworld:draw_physics_circ(f)
+  love.graphics.circle("fill", S(f.body:getX()), S(f.body:getY()), S(f.shape:getRadius()))
+end
+
+function Overworld:draw_physics_rect(f)
+  local points = {f.body:getWorldPoints(f.shape:getPoints())}
+  for k, v in ipairs(points) do
+    points[k] = S(v)
+  end
+  love.graphics.polygon("fill", points)
 end
 
 function Overworld:keypressed(top, key)
@@ -257,26 +281,64 @@ function Overworld:draw_card()
   if self.card_sel == 0 then
     self.card_sel = 1
   end
+end
 
-  if #self.deck == 0 then
-    self:reshuffle()
+function Overworld:discard_card(card)
+  card.angle = 0
+  card.tx = 0
+  card.ty = HEIGHT - (#self.discard + 1) * DECK_SPACING + DECK_DEPTH
+
+  for i, hand_card in ipairs(self.hand) do
+    if card == hand_card then
+      table.remove(self.hand, i)
+      break
+    end
   end
+
+  if self.card_sel > #self.hand then
+    self.card_sel = #self.hand
+  end
+
+  table.insert(self.discard, card)
 end
 
 function Overworld:use_card()
   local card = self.hand[self.card_sel]
   if card and card:castable(self) then
     card:cast(self)
-    card.angle = 0
-    card.tx = 0
-    card.ty = HEIGHT - (#self.discard + 1) * DECK_SPACING + DECK_DEPTH
-
-    table.remove(self.hand, self.card_sel)
-    if self.card_sel > #self.hand then
-      self.card_sel = #self.hand
+    self:discard_card(card)
+    if self:ready_for_hand() then
+      self:draw_hand()
     end
+  end
+end
 
-    table.insert(self.discard, card)
+function Overworld:ready_for_hand()
+  for i, card in ipairs(self.hand) do
+    if card:castable(self) then
+      return false
+    end
+  end
+
+  return true
+end
+
+function Overworld:draw_hand()
+  self.mana = self.max_mana
+
+  -- discard hand
+  while #self.hand > 0 do
+    self:discard_card(self.hand[1])
+  end
+
+  -- reshuffle if we need to
+  if #self.deck == 0 then
+    self:reshuffle()
+  end
+
+  -- draw a new hand
+  while #self.hand < MAX_HAND_SIZE do
+    self:draw_card()
   end
 end
 
@@ -298,7 +360,6 @@ end
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
-    self:draw_card()
   end
 
   -- right
@@ -324,87 +385,5 @@ function Overworld:wheelmoved(top, x, y)
 end
 
 function Overworld:move(x, y)
-  local hspace = WIDTH / 3
-  local vspace = HEIGHT / 3
-
-  -- move the char
-  self.char.x = self.char.x + x
-  self.char.y = self.char.y + y
-
-  -- lock the char within the center third of the screen by scrolling the map
-  -- inversely with the char when he steps over the edge
-
-  if self.char.x < hspace then
-    self.map.x = self.map.x - (self.char.x - hspace)
-    self.char.x = hspace
-  end
-
-  if self.char.x > WIDTH - self.char.size - hspace then
-    self.map.x = self.map.x - (self.char.x - (WIDTH - self.char.size - hspace))
-    self.char.x = (WIDTH - self.char.size - hspace)
-  end
-
-  if self.char.y < vspace then
-    self.map.y = self.map.y - (self.char.y - vspace)
-    self.char.y = vspace
-  end
-
-  if self.char.y > HEIGHT - self.char.size - vspace then
-    self.map.y = self.map.y - (self.char.y - (HEIGHT - self.char.size - vspace))
-    self.char.y = (HEIGHT - self.char.size - vspace)
-  end
-
-  -- compute the tile under the char
-  local sx = math.floor((self.char.x - self.map.x_off) / self.map.tile_size)
-  local sy = math.floor((self.char.y - self.map.y_off) / self.map.tile_size)
-
-  -- check collision with the char's top left, top right, bottom left, and
-  -- bottom right corners, shifting his position appropriately
-  self:collide(sx, sy)
-  self:collide(sx, sy + 1)
-  self:collide(sx + 1, sy)
-  self:collide(sx + 1, sy + 1)
-end
-
-function Overworld:collide(x, y)
-  -- get the char's position within the map
-  local bx = self.char.x - self.map.x_off
-  local by = self.char.y - self.map.y_off
-
-  -- decide if the tile is blocked
-  local blocked = self.map:get_blocked(self.map.x_start + x, self.map.y_start + y)
-
-  if blocked then
-
-    -- compute the tile's coordinates within the map
-    local tx = x * self.map.tile_size
-    local ty = y * self.map.tile_size
-
-    -- compute the char's angle from the tile
-    local dx = bx - tx
-    local dy = by - ty
-    local angle = math.atan2(dy, dx) / math.pi / 2
-
-    -- depending on the direction from the tile, shift the char away from it
-
-    -- char is below
-    if angle >= 1 / 8 and angle <= 3 / 8 then
-      self.char.y = (y + 1) * self.map.tile_size + self.map.y_off
-    end
-
-    -- char is above
-    if angle >= -3 / 8 and angle <= -1 / 8 then
-      self.char.y = (y - 1) * self.map.tile_size + self.map.y_off
-    end
-
-    -- char is right
-    if angle >= -1 / 8 and angle <= 1 / 8 then
-      self.char.x = (x + 1) * self.map.tile_size + self.map.x_off
-    end
-
-    -- char is left
-    if angle <= -3 / 8 or angle >= 3 / 8 then
-      self.char.x = (x - 1) * self.map.tile_size + self.map.x_off
-    end
-  end
+  self.char.body:setLinearVelocity(x * 60, y * 60)
 end

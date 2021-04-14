@@ -32,14 +32,14 @@ TRANSITION_SPEED = 4
 -- bigger is slower
 CARD_FADE_SPEED = 7
 CARD_FLIP_SPEED = 7
-CARD_MOVE_SPEED = 4
+CARD_MOVE_SPEED = 7
 
 -- deck / discard pile positioning
 DECK_SPACING = 4
 DECK_DEPTH = -17
 
 -- reshuffle speeds
-SHUFFLE_DELAY = 2
+SHUFFLE_DELAY = 0
 
 -- hand positioning
 HAND_DEPTH = 6

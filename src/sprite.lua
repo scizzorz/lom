@@ -5,51 +5,60 @@ require("util")
 
 Sprite = Object:extend()
 
-function Sprite:init(id)
+function Sprite:init(data)
   self.x = 0
   self.y = 0
-  self.size = framesets[atlas[id].frameset].size
   self.sx = 1
   self.sy = 1
   self.ox = 0
   self.oy = 0
   self.angle = 0
   self.frame = 0
-  self.visible = true
 
   self.anim = nil
-  self.anim_table = nil
-  self.anims = atlas[id].anims
-  self.gfx = load_gfx(atlas[id].texture)
-  self.quads = load_quads(atlas[id].frameset)
+
+  self.data = data
+  self.tex = load_texture(self.data.texture)
+  self.quad = build_quad(self.data.frameset, self.frame)
+end
+
+function Sprite:set_frame(to)
+  if to ~= self.frame then
+    self.frame = to
+    self.quad = build_quad(self.data.frameset, self.frame)
+  end
 end
 
 function Sprite:update()
   if self.anim then
-    self.frame = self.anim:update()
+    self:set_frame(self.anim:update())
   end
 end
 
-function Sprite:set_anim(anim_table)
-  if anim_table ~= self.anim_table then
-    self.anim_table = anim_table
+function Sprite:set_anim(label)
+  if self.data.anims == nil then
+    print("Attempting to set animation to " .. tostring(label))
+  end
+
+
+  local anim_table = self.data.anims[label]
+  if (self.anim == nil) or (anim_table ~= self.anim.data) then
     self.anim = Anim(anim_table)
+    self:set_frame(self.anim:cur())
   end
 end
 
 function Sprite:draw()
-  if self.visible then
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(self.gfx, self.quads[self.frame],
-                      S(self.x), S(self.y), self.angle,
-                      SCALE * self.sx, SCALE * self.sy,
-                      self.ox, self.oy)
-  end
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.draw(self.tex, self.quad,
+                    S(self.x), S(self.y), self.angle,
+                    SCALE * self.sx, SCALE * self.sy,
+                    self.ox, self.oy)
 end
 
 HealthBar = Object:extend()
 
-function HealthBar:init(cur, max)
+function HealthBar:init(cur, max, border_data, fill_data)
   self.cur = cur or 50
   self.max = max or 100
   self.x = 0
@@ -61,12 +70,12 @@ function HealthBar:init(cur, max)
   self.ox = 0
   self.oy = 0
   self.angle = 0
-  self.delay = 0
 
-  self.frame = load_gfx("ui_health_frame")
-  self.frame_quad = love.graphics.newQuad(0, 0, 80, 16, 80, 16)
+  self.border_tex = load_texture(border_data.texture)
+  self.border_quad = build_quad(border_data.frameset, 0)
 
-  self.fill = load_gfx("ui_health_fill")
+  self.fill_data = fill_data
+  self.fill_tex = load_texture(fill_data.texture)
 end
 
 function HealthBar:update(cur)
@@ -74,16 +83,16 @@ function HealthBar:update(cur)
 end
 
 function HealthBar:draw()
-  -- draw frame
+  -- draw border
   love.graphics.setColor(1, 1, 1)
-  love.graphics.draw(self.frame, self.frame_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
+  love.graphics.draw(self.border_tex, self.border_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 
   -- draw fill if we have some value
   if self.cur > 0 then
     love.graphics.setColor(self.cur / self.max * 0.6 + 0.4, 0.1, 0.1)
     local width = math.max(1, math.floor(self.cur / self.max * 66))
     local fill_quad = love.graphics.newQuad(0, 0, width, 10, 66, 10)
-    love.graphics.draw(self.fill, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
+    love.graphics.draw(self.fill_tex, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
   end
 end
 
@@ -109,8 +118,8 @@ function Card:init(id)
   self.tfade = 0
 
   self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
-  self.tex = load_gfx(self.data.art)
-  self.back = load_gfx("card_back")
+  self.tex = load_texture(self.data.art)
+  self.back = load_texture("card_back")
 end
 
 function Card:update()
@@ -154,7 +163,7 @@ end
 Aiming = Object:extend()
 
 function Aiming:init(tex, w, h, ox, oy)
-  self.tex = load_gfx(tex)
+  self.tex = load_texture(tex)
   self.w = w
   self.h = h
   self.ox = ox
