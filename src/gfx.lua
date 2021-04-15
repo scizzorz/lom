@@ -3,7 +3,7 @@ framesets = {
     tile_width = 25,
     tile_height = 25,
     tex_width = 175,
-    tex_height = 100,
+    tex_height = 200,
   },
 }
 
