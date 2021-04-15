@@ -180,20 +180,14 @@ function Overworld:update(top, dt)
     dy = dy + 1
   end
 
-  if dy == 0 then
-    if dx < 0 then
-      self.char.dir = "left"
-    elseif dx > 0 then
-      self.char.dir = "right"
-    end
-  end
+  local dirs = {
+    [-1] = {[-1] = "up_left", [0] = "left", [1] = "down_left"},
+    [0] = {[-1] = "up", [0] = nil, [1] = "down"},
+    [1] = {[-1] = "up_right", [0] = "right", [1] = "down_right"},
+  }
 
-  if dx == 0 then
-    if dy < 0 then
-      self.char.dir = "up"
-    elseif dy > 0 then
-      self.char.dir = "down"
-    end
+  if dirs[dx][dy] then
+    self.char.dir = dirs[dx][dy]
   end
 
   -- diagonal movement should be slower

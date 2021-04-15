@@ -17,6 +17,14 @@ animations = {
     walk_left = {14, 15, 16, 17, 18, 19, 20, fps=10},
     stand_right = {21},
     walk_right = {21, 22, 23, 24, 25, 26, 27, fps=10},
+    stand_up_left = {42},
+    walk_up_left = {42, 43, 44, 45, 46, 47, 48, fps=10},
+    stand_up_right = {35},
+    walk_up_right = {35, 36, 37, 38, 39, 40, 41, fps=10},
+    stand_down_left = {49},
+    walk_down_left = {49, 50, 51, 52, 53, 54, 55, fps=10},
+    stand_down_right = {28},
+    walk_down_right = {28, 29, 30, 31, 32, 33, 34, fps=10},
   },
 }
 
