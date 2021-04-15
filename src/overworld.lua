@@ -287,6 +287,7 @@ function Overworld:discard_card(card)
   card.angle = 0
   card.tx = 0
   card.ty = HEIGHT - (#self.discard + 1) * DECK_SPACING + DECK_DEPTH
+  card.tfade = 0
 
   for i, hand_card in ipairs(self.hand) do
     if card == hand_card then
