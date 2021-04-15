@@ -22,4 +22,10 @@ card_db = {
     art = "card_shield_beam",
     cost = 1,
   },
+
+  eviscerate = {
+    name = "Eviscerate",
+    art = "card_eviscerate",
+    cost = 1,
+  },
 }
