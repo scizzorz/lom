@@ -92,7 +92,7 @@ function Overworld:aim()
   mx = s2p(mx - SCISSOR.x)
   my = s2p(my - SCISSOR.y)
 
-  local angle = math.angle(self.char.x + self.char.size / 2, self.char.y + self.char.size / 2, mx, my)
+  local angle = math.angle(self.char.x, self.char.y, mx, my)
 
   local rnd = (2 * math.pi) / 8
   angle = math.floor(angle / rnd + 0.5) * rnd / (math.pi / 4)
