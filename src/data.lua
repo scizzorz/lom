@@ -40,4 +40,10 @@ card_db = {
     art = "card_sprint",
     cost = 4,
   },
+
+  cold_blood = {
+    name = "Cold Blood",
+    art = "card_cold_blood",
+    cost = 0,
+  },
 }
