@@ -45,7 +45,7 @@ function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
   love.graphics.setLineStyle("rough")
 
-  love.graphics.setFont(load_font("ui_font"), 20)
+  love.graphics.setNewFont("fonts/Minimal5x7.ttf", S(10))
 
   love.physics.setMeter(25)
 
