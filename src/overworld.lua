@@ -24,6 +24,9 @@ function Overworld:init()
   local map_width = math.ceil(WIDTH / tile_size) + 2
   local map_height = math.ceil(HEIGHT / tile_size) + 2
 
+  self.fade = 0
+  self.tfade = 0
+
   self.char = Char(self.world, 8, Sprite(atlas.dummy))
   self.char.sprite.ox = 13
   self.char.sprite.oy = 19
@@ -116,6 +119,15 @@ function Overworld:update_mana_ui()
 end
 
 function Overworld:update(top, dt)
+  self.fade = self.fade + (self.tfade - self.fade) / TRANSITION_SPEED
+
+  if not top then
+    self.tfade = 0.5
+    return
+  end
+
+  self.tfade = 0
+
   self.world:update(dt)
 
   self.map:update()
@@ -226,6 +238,14 @@ function Overworld:draw(top)
   for i, card in ipairs(self.discard) do
     card:draw()
   end
+
+  if self.fade > 0 then
+    -- black out the screen
+    -- FIXME there's bug here sometimes?
+    local w, h = love.graphics.getDimensions()
+    love.graphics.setColor(0, 0, 0, self.fade)
+    love.graphics.rectangle("fill", 0, 0, w, h)
+  end
 end
 
 function Overworld:draw_physics_circ(f)
@@ -255,6 +275,8 @@ function Overworld:keypressed(top, key)
 
   if keymap[key] ~= nil and keymap[key] <= #self.hand then
     self.card_sel = keymap[key]
+  elseif key == KEYBINDINGS.menu then
+    ENGINE:push_state(Menu())
   end
 end
 
@@ -381,4 +403,20 @@ end
 
 function Overworld:move(x, y)
   self.char.body:setLinearVelocity(x * 60, y * 60)
+end
+
+
+Menu = State:extend()
+
+function Menu:init()
+  self.bg = Sprite(atlas.menu)
+  self.bg.x = (WIDTH - atlas.menu.frameset.tile_width) / 2
+  self.bg.y = (HEIGHT - atlas.menu.frameset.tile_height) / 2
+end
+
+function Menu:update()
+end
+
+function Menu:draw()
+  self.bg:draw()
 end

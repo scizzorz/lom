@@ -130,6 +130,7 @@ function Transition:draw()
   end
 
   -- black out the screen
+  -- FIXME there's bug here sometimes?
   local w, h = love.graphics.getDimensions()
   love.graphics.setColor(0, 0, 0, self.a)
   love.graphics.rectangle("fill", 0, 0, w, h)

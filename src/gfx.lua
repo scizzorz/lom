@@ -35,6 +35,16 @@ atlas = {
     anims = animations.dummy,
   },
 
+  menu = {
+    texture = "ui_menu",
+    frameset = {
+      tile_width = 65,
+      tile_height = 96,
+      tex_width = 65,
+      tex_height = 96,
+    },
+  },
+
   mana = {
     texture = "ui_mana",
     frameset = {
