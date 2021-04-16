@@ -45,6 +45,23 @@ atlas = {
     },
   },
 
+  menu_options = {
+    texture = "ui_menu_options",
+    frameset = {
+      tile_width = 33,
+      tile_height = 10,
+      tex_width = 33,
+      tex_height = 50,
+    },
+    anims = {
+      paused = {0},
+      resume = {1},
+      options = {2},
+      main_menu = {3},
+      exit_game = {4},
+    },
+  },
+
   mana = {
     texture = "ui_mana",
     frameset = {

@@ -280,7 +280,34 @@ function Overworld:keypressed(top, key)
   if keymap[key] ~= nil and keymap[key] <= #self.hand then
     self.card_sel = keymap[key]
   elseif key == KEYBINDINGS.menu then
-    ENGINE:push_state(Menu())
+    ENGINE:push_state(Menu({
+      {
+        atlas=atlas.menu_options,
+        anim="resume",
+        call=function()
+          ENGINE:pop_state()
+        end,
+      },
+      {
+        atlas=atlas.menu_options,
+        anim="options",
+        call=function()
+        end,
+      },
+      {
+        atlas=atlas.menu_options,
+        anim="main_menu",
+        call=function()
+        end,
+      },
+      {
+        atlas=atlas.menu_options,
+        anim="exit_game",
+        call=function()
+          love.event.quit()
+        end,
+      },
+    }))
   end
 end
 
@@ -412,10 +439,33 @@ end
 
 Menu = State:extend()
 
-function Menu:init()
+function Menu:init(options)
   self.bg = Sprite(atlas.menu)
-  self.bg.x = (WIDTH - atlas.menu.frameset.tile_width) / 2
+  self.bg.ox = atlas.menu.frameset.tile_width / 2
+  self.bg.x = (WIDTH) / 2
   self.bg.y = (HEIGHT - atlas.menu.frameset.tile_height) / 2
+
+  self.label = Sprite(atlas.menu_options)
+  self.label.ox = atlas.menu_options.frameset.tile_width / 2
+  self.label.x = self.bg.x + 5
+  self.label.y = self.bg.y
+
+  self.label = Sprite(atlas.menu_options)
+  self.label.ox = atlas.menu_options.frameset.tile_width / 2
+  self.label.x = self.bg.x
+  self.label.y = self.bg.y + 5
+
+  self.options = options
+  self.option_labels = {}
+
+  for i, option in ipairs(options) do
+    local label = Sprite(option.atlas)
+    label.ox = label.data.frameset.tile_width / 2
+    label.x = self.bg.x
+    label.y = self.bg.y + 15 + 11 * i
+    label:set_anim(option.anim)
+    table.insert(self.option_labels, label)
+  end
 end
 
 function Menu:keypressed(top, key)
@@ -429,8 +479,9 @@ end
 
 function Menu:draw()
   self.bg:draw()
+  self.label:draw()
 
-  love.graphics.print("- PAUSED -", S(self.bg.x), S(self.bg.y))
-
-  love.graphics.print("- PAUSED -", S(self.bg.x), S(self.bg.y))
+  for i, label in ipairs(self.option_labels) do
+    label:draw()
+  end
 end
