@@ -76,6 +76,16 @@ atlas = {
     },
   },
 
+  mana_costs = {
+    texture = "card_mana_cost",
+    frameset = {
+      tile_width = 9,
+      tile_height = 11,
+      tex_width = 45,
+      tex_height = 22,
+    },
+  },
+
   ui_health_frame = {
     texture = "ui_health_frame",
     frameset = {

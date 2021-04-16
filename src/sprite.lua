@@ -123,6 +123,12 @@ function Card:init(id)
   self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
   self.tex = load_texture(self.data.art)
   self.back = load_texture("card_back")
+
+  self.digits = load_texture("card_mana_cost")
+end
+
+function Card:cost()
+  return self.data.cost
 end
 
 function Card:update()
@@ -134,6 +140,8 @@ function Card:update()
     self.flip = self.flip + (self.tflip - self.flip) / CARD_FLIP_SPEED
     self.fade = self.fade + (self.tfade - self.fade) / CARD_FADE_SPEED
   end
+
+  self.cost_quad = build_quad(atlas.mana_costs.frameset, self:cost())
 end
 
 function Card:draw(castable)
@@ -149,8 +157,33 @@ function Card:draw(castable)
 
   -- draw card face, faded for mana
   else
+    -- fade unusable costs to grey-blue
     love.graphics.setColor(1 - 0.6 * self.fade, 1 - 0.6 * self.fade, 1 - 0.5 * self.fade)
-    love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE * 2 * (0.5 - self.flip), SCALE, self.ox, self.oy)
+
+    -- draw card art
+    love.graphics.draw(
+      self.tex, self.quad,
+      S(self.x), S(self.y),
+      self.angle,
+      SCALE * 2 * (0.5 - self.flip), SCALE,
+      self.ox, self.oy
+    )
+
+    -- fade unusable costs to red
+    love.graphics.setColor(1 - 0.3 * self.fade, 1 - 0.8 * self.fade, 1 - 0.8 * self.fade)
+
+    -- draw mana cost
+    -- the magic numbers for offsetting this are derived from offsetting the
+    -- center of the cost by (-8.5, -13) from the center of the card.
+    -- atan2(-13, -8.5) = -2.15
+    -- sqrt(13^2 + 8.5^2) = 15.53
+    love.graphics.draw(
+      self.digits, self.cost_quad,
+      S(self.x + 15.53 * math.cos(self.angle - 2.15)), S(self.y + 15.53 * math.sin(self.angle - 2.15)),
+      self.angle,
+      SCALE * 2 * (0.5 - self.flip), SCALE,
+      3.5, 5
+    )
   end
 end
 
