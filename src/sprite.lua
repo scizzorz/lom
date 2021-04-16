@@ -48,8 +48,11 @@ function Sprite:set_anim(label)
   end
 end
 
-function Sprite:draw()
-  love.graphics.setColor(1, 1, 1)
+function Sprite:draw(no_color)
+  if not no_color then
+    love.graphics.setColor(1, 1, 1)
+  end
+
   love.graphics.draw(self.tex, self.quad,
                     S(self.x), S(self.y), self.angle,
                     SCALE * self.sx, SCALE * self.sy,

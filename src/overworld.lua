@@ -291,12 +291,14 @@ function Overworld:keypressed(top, key)
       {
         atlas=atlas.menu_options,
         anim="options",
+        disabled=true,
         call=function()
         end,
       },
       {
         atlas=atlas.menu_options,
         anim="main_menu",
+        disabled=true,
         call=function()
         end,
       },
@@ -463,9 +465,19 @@ function Menu:init(options)
     label.ox = label.data.frameset.tile_width / 2
     label.x = self.bg.x
     label.y = self.bg.y + 15 + 11 * i
+    if option.disabled then
+      label.tfade = 0.6
+    elseif i == self.cursor then
+      label.tfade = 0
+    else
+      label.tfade = 0.4
+    end
+    label.fade = label.tfade
     label:set_anim(option.anim)
     table.insert(self.option_labels, label)
   end
+
+  self.cursor = 1
 end
 
 function Menu:keypressed(top, key)
@@ -475,6 +487,31 @@ function Menu:keypressed(top, key)
 end
 
 function Menu:update()
+  local mx, my = love.mouse.getPosition()
+  mx = s2p(mx - SCISSOR.x)
+  my = s2p(my - SCISSOR.y)
+
+  for i, label in ipairs(self.option_labels) do
+    if not self.options[i].disabled and my > label.y and my < label.y + label.data.frameset.tile_height then
+      self.cursor = i
+    end
+
+    if self.options[i].disabled then
+      label.tfade = 0.6
+    elseif i == self.cursor then
+      label.tfade = 0
+    else
+      label.tfade = 0.4
+    end
+
+    label.fade = label.fade + (label.tfade - label.fade) / MENU_OPTION_SPEED
+  end
+end
+
+function Menu:mousepressed(top, x, y, button)
+  if button == 1 then
+    self.options[self.cursor]:call()
+  end
 end
 
 function Menu:draw()
@@ -482,6 +519,7 @@ function Menu:draw()
   self.label:draw()
 
   for i, label in ipairs(self.option_labels) do
-    label:draw()
+    love.graphics.setColor(1 - label.fade, 1 - label.fade, 1 - label.fade)
+    label:draw(true)
   end
 end

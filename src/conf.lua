@@ -28,6 +28,10 @@ MANA_PARTS = 60
 -- bigger is slower
 TRANSITION_SPEED = 4
 
+-- menu cursor fade
+-- bigger is slower
+MENU_OPTION_SPEED = 4
+
 -- card animation speeds
 -- bigger is slower
 CARD_FADE_SPEED = 7
