@@ -34,8 +34,6 @@ function Overworld:init()
   self.char.body:setY(HEIGHT / 2)
   self.char.dir = "down"
 
-  self.aiming = Aiming("ui_aiming", 31, 34, 15.5, 18.5)
-
   self.map = Map(self.world, "map_arena", 400, 225, {
     {0, 0, 25, 0, 25, 225, 0, 225},
     {375, 0, 400, 0, 400, 225, 375, 225},
@@ -94,17 +92,24 @@ function Overworld:aim()
   mx = s2p(mx - SCISSOR.x)
   my = s2p(my - SCISSOR.y)
 
-  -- finding char center is annoying
-  -- self.aiming.x = self.char.x + self.char.size
-  -- self.aiming.y = self.char.y + self.char.size
-
-  -- lock angle to eighth-turns (pi / 4 radians)
   local angle = math.angle(self.char.x + self.char.size / 2, self.char.y + self.char.size / 2, mx, my)
-  if AIMING_STEPS > 0 then
-    local rnd = (2 * math.pi) / AIMING_STEPS
-    angle = math.floor(angle / rnd + 0.5) * rnd
-  end
-  self.aiming.angle =  angle + math.pi / 2
+
+  local rnd = (2 * math.pi) / 8
+  angle = math.floor(angle / rnd + 0.5) * rnd / (math.pi / 4)
+
+  local dirs = {
+    [-4] = "left",
+    [-3] = "up_left",
+    [-2] = "up",
+    [-1] = "up_right",
+    [0] = "right",
+    [1] = "down_right",
+    [2] = "down",
+    [3] = "down_left",
+    [4] = "left",
+  }
+
+  self.char.dir = dirs[angle]
 end
 
 function Overworld:update_mana_ui()
@@ -211,16 +216,14 @@ function Overworld:update(top, dt)
   if dx ~= 0 or dy ~= 0 then
     self.char.sprite:set_anim("walk_" .. self.char.dir)
   else
+    self:aim()
     self.char.sprite:set_anim("stand_" .. self.char.dir)
   end
-
-  self:aim()
 end
 
 function Overworld:draw(top)
   self.map:draw()
   self.char:draw()
-  -- self.aiming:draw()
   self.ui_health:draw()
 
   for i, crystal in ipairs(self.ui_mana) do
