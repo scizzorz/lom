@@ -70,6 +70,8 @@ atlas = {
   },
 }
 
+local fonts = {}
+
 local textures = {}
 
 local quads = {}
@@ -78,6 +80,19 @@ function build_quad(frameset, frame)
   local x = (frame * frameset.tile_width) % frameset.tex_width
   local y = math.floor(frame * frameset.tile_width / frameset.tex_width) * frameset.tile_height
   return love.graphics.newQuad(x, y, frameset.tile_width, frameset.tile_height, frameset.tex_width, frameset.tex_height)
+end
+
+function load_font(id, chars)
+  chars = chars or " abcdefghijklmnopqrstuvwxyz" ..
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+    "123456789.,!?-+/():;%&`'*#=[]\""
+
+  if fonts[id] == nil then
+    print("loading font: " .. id)
+    fonts[id] = love.graphics.newImageFont("gfx/" .. id .. ".png", chars)
+  end
+
+  return fonts[id]
 end
 
 function load_texture(id)
