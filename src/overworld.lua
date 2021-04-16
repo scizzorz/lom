@@ -261,6 +261,10 @@ function Overworld:draw_physics_rect(f)
 end
 
 function Overworld:keypressed(top, key)
+  if not top then
+    return
+  end
+
   local keymap = {
     [KEYBINDINGS.card1]=1,
     [KEYBINDINGS.card2]=2,
@@ -414,9 +418,19 @@ function Menu:init()
   self.bg.y = (HEIGHT - atlas.menu.frameset.tile_height) / 2
 end
 
+function Menu:keypressed(top, key)
+  if key == KEYBINDINGS.menu then
+    ENGINE:pop_state()
+  end
+end
+
 function Menu:update()
 end
 
 function Menu:draw()
   self.bg:draw()
+
+  love.graphics.print("- PAUSED -", S(self.bg.x), S(self.bg.y))
+
+  love.graphics.print("- PAUSED -", S(self.bg.x), S(self.bg.y))
 end

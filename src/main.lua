@@ -45,7 +45,8 @@ function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
   love.graphics.setLineStyle("rough")
 
-  love.graphics.setNewFont("fonts/Minimal5x7.ttf", S(10))
+  -- wtf is a good size for this font
+  love.graphics.setNewFont("fonts/Minimal5x7.ttf", 35)
 
   love.physics.setMeter(25)
 
