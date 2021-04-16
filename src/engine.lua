@@ -81,7 +81,9 @@ function Engine:change_state(to)
 end
 
 function Engine:ctl(event, ...)
-  for i, state in ipairs(self.states) do
+  -- don't use ipairs in case states are manipulated during a ctl
+  for i=1, #self.states do
+    local state = self.states[i]
     if state[event] ~= nil then
       state[event](state, i == #self.states, ...)
     end
