@@ -304,9 +304,12 @@ function draw_text(text, x, y)
     elseif c >= 48 and c <= 57 then
       -- 0..9 start at f0
       f = c - 48
+    elseif c >= 42 and c <= 45 then
+      -- *+,- start at f36
+      f = c - 6
     else
       -- ?
-      f = 39
+      f = 38
     end
 
     -- don't even try drawing a space, okay
