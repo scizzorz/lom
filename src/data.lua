@@ -16,7 +16,7 @@ card_db = {
     art = "card_sprint",
     cost = 2,
     cast = function(caster, x, y)
-      caster:apply("sprint", 5)
+      caster:apply("sprint", 3)
     end
   },
 
@@ -37,16 +37,88 @@ card_db = {
       OVERWORLD.mana = OVERWORLD.max_mana
     end
   },
+
+  deadly_poison = {
+    name = "Deadly Poison",
+    art = "card_blank",
+    cost = 1,
+    cast = function(caster, x, y)
+      caster:apply("deadly_poison_coating", 60)
+    end
+  },
+
+  instant_poison = {
+    name = "Instant Poison",
+    art = "card_blank",
+    cost = 1,
+    cast = function(caster, x, y)
+      caster:apply("instant_poison_coating", 60)
+    end
+  },
+
+  mindnumbing_poison = {
+    name = "Mind-numbing Poison",
+    art = "card_blank",
+    cost = 1,
+    cast = function(caster, x, y)
+      caster:apply("mindnumbing_poison_coating", 60)
+    end
+  },
+
+  slice_and_dice = {
+    name = "Slice and Dice",
+    art = "card_blank",
+    cost = 1,
+    cast = function(caster, x, y)
+      caster:apply("slice_and_dice", 10)
+    end
+  },
 }
 
 status_db = {
   sprint = {
     name = "Sprint",
     kind = "buff",
-    effect = 1.5,
+    effect = 2,
   },
+
   cold_blood = {
     name = "Cold Blood",
     kind = "buff",
+  },
+
+  deadly_poison_coating = {
+    name = "Deadly Poison",
+    kind = "buff",
+  },
+
+  instant_poison_coating = {
+    name = "Instant Poison",
+    kind = "buff",
+  },
+
+  mindnumbing_poison_coating = {
+    name = "Mind-numbing Poison",
+    kind = "buff",
+  },
+
+  slice_and_dice = {
+    name = "Slice and Dice",
+    kind = "buff",
+  },
+
+  slice_and_dice = {
+    name = "Slice and Dice",
+    kind = "buff",
+  },
+
+  bleed = {
+    name = "Bleed",
+    kind = "debuff",
+  },
+
+  deadly_poison = {
+    name = "Bleed",
+    kind = "debuff",
   },
 }
