@@ -35,6 +35,7 @@ function Overworld:init()
   self.en.body:setX(WIDTH / 2 + 60)
   self.en.body:setY(HEIGHT / 2)
 
+  -- draw the map and its obstacles
   self.map = Map(self.world, "map_arena", 400, 225, {
     {0, 0, 25, 0, 25, 225, 0, 225},
     {375, 0, 400, 0, 400, 225, 375, 225},
@@ -45,6 +46,9 @@ function Overworld:init()
     {350, 200, 375, 175, 375, 200},
     {100, 100, 125, 100, 125, 125, 100, 125},
   })
+
+  -- scrolling combat text
+  self.sct = {}
 
   self.max_mana = MAX_MANA * MANA_PARTS
   self.mana = 0
@@ -85,6 +89,10 @@ function Overworld:init()
   self:aim()
   self:update_mana_ui()
   self:draw_hand()
+end
+
+function Overworld:add_sct(...)
+  table.insert(self.sct, SCT(...))
 end
 
 function Overworld:aim()
@@ -144,6 +152,20 @@ function Overworld:update(top, dt)
 
   if self.health < self.max_health then
     self.health = self.health + 1
+  end
+
+  -- FIXME kill some of these
+  local i = 1
+  while i <= #self.sct do
+    print("iterating sct: " .. i)
+    local sct = self.sct[i]
+    sct:update(dt)
+
+    if sct.timer <= 0 then
+      table.remove(self.sct, i)
+    else
+      i = i + 1
+    end
   end
 
   for i, card in ipairs(self.deck) do
@@ -247,6 +269,10 @@ function Overworld:draw(top)
 
   for i, card in ipairs(self.discard) do
     card:draw()
+  end
+
+  for i, sct in ipairs(self.sct) do
+    sct:draw()
   end
 
   if self.fade > 0 then
@@ -424,6 +450,7 @@ function Overworld:mousepressed(top, x, y, button)
     local dir = math.angle(self.char.x, self.char.y, self.en.x, self.en.y)
     if dist <= MELEE_RANGE then
       self.en.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
+      self:add_sct(2, self.en.x, self.en.y - 8, {r=0.7, g=0.2, b=0.2})
     end
   end
 

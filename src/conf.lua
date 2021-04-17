@@ -34,6 +34,12 @@ MANA_PARTS = 60
 -- bigger is slower
 TRANSITION_SPEED = 4
 
+-- SCT scroll speed
+-- bigger is slower
+SCT_SPEED = 10
+SCT_FADE_START = 0.25
+SCT_DURATION = 1
+
 -- menu cursor fade
 -- bigger is slower
 MENU_OPTION_SPEED = 4

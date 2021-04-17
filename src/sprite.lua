@@ -262,6 +262,35 @@ function Aiming:draw()
   love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 end
 
+SCT = Object:extend()
+
+function SCT:init(text, x, y, color)
+  self.text = tostring(text)
+  self.x = x
+  self.y = y
+  self.ty = y - 12
+  self.a = 1
+  self.ta = 1
+  self.color = color
+  self.timer = SCT_DURATION
+end
+
+function SCT:update(dt)
+  self.timer = self.timer - dt
+
+  if self.timer <= SCT_FADE_START then
+    self.ta = 0
+  end
+
+  self.y = self.y + (self.ty - self.y) / SCT_SPEED
+  self.a = self.a + (self.ta - self.a) / SCT_SPEED
+end
+
+function SCT:draw()
+  love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.a)
+  draw_text(self.text, self.x - 4 * #self.text, self.y)
+end
+
 function draw_text(text, x, y)
   text = tostring(text):lower()
   local tex = load_texture("card_text")
