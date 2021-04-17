@@ -29,3 +29,11 @@ card_db = {
     cost = 0,
   },
 }
+
+status_db = {
+  sprint = {
+    name = "Sprint",
+    kind = "buff",
+    effect = 1.5,
+  },
+}

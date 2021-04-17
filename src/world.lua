@@ -58,8 +58,9 @@ function Actor:init(world, size, sprite)
   self.body:setLinearDamping(ACTOR_LINEAR_DAMPING)
   self.fixture = love.physics.newFixture(self.body, self.shape)
 
-  -- actions
+  -- state
   self.lag = 0
+  self.status = {}
 
   self:update()
 end
@@ -73,6 +74,32 @@ function Actor:update(dt)
 
   self.sprite:update(dt)
 
+  -- update all buffs/debuffs
+  for k, v in pairs(self.status) do
+    local status = status_db[k]
+
+    -- check if this status has an on-tick effect
+    if status.update then
+      status.update(v, dt, self)
+    end
+
+    -- only tick down time if this status has a duration
+    if v.duration then
+      v.duration = v.duration - dt
+
+      if v.duration <= 0 then
+        -- check if there's an on-fade effect
+        if status.fade then
+          status.fade(v, self)
+        end
+
+        self.status[k] = nil
+      end
+    end
+
+  end
+
+  -- tick down on a delayed action
   if self.lag > 0 then
     self.lag = self.lag - dt
     if self.lag <= 0 then
@@ -81,10 +108,39 @@ function Actor:update(dt)
   end
 end
 
+-- perform a delayed action
 function Actor:cast()
   if self.lag_action then
     self:lag_action()
     self.lag_action = nil
+  end
+end
+
+-- apply a buff / debuff effect
+function Actor:apply(status, duration, stacks)
+  stacks = stacks or 1
+
+  local max_stacks = status_db[status].max_stacks or 1
+  local cur = self.status[status]
+
+  if cur then
+    if duration then
+      if cur.duration and duration > cur.duration then
+        cur.duration = duration
+      end
+
+      if cur.max_duration and duration > cur.max_duration then
+        cur.max_duration = duration
+      end
+    end
+
+    cur.stacks = math.min(max_stacks, cur.stacks + stacks)
+  else
+    self.status[status] = {
+      max_duration=duration,
+      duration=duration,
+      stacks = math.min(max_stacks, stacks),
+    }
   end
 end
 
@@ -140,8 +196,8 @@ function SlimeBehavior:update(dt)
 end
 
 function SlimeBehavior:choose_new()
-
   local walk = love.math.random(2)
+
   if walk == 1 then
     local dir = love.math.random(0, 7) * math.pi / 4
     self.dx = math.cos(dir) * SLIME_WALK_SPEED
