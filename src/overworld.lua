@@ -441,7 +441,7 @@ function Overworld:wheelmoved(top, x, y)
 end
 
 function Overworld:move(x, y)
-  self.char.body:setLinearVelocity(x * 60, y * 60)
+  self.char.body:applyLinearImpulse(x, y)
 end
 
 

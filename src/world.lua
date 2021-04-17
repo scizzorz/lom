@@ -53,7 +53,7 @@ function Actor:init(world, size, sprite)
   self.size = size
   self.shape = love.physics.newCircleShape(0, 0, size)
   self.body = love.physics.newBody(self.world, 0, 0, "dynamic")
-  self.body:setLinearDamping(30)
+  self.body:setLinearDamping(ACTOR_LINEAR_DAMPING)
   self.fixture = love.physics.newFixture(self.body, self.shape)
 
   self:update()
@@ -104,16 +104,17 @@ function SlimeBehavior:update(dt)
   end
 
   if self.mode == "stand" then
-    self.actor.body:setLinearVelocity(0, 0)
+    self.actor.sprite:set_anim("stand_" .. self.actor.dir)
+  elseif self.mode == "attack" then
     self.actor.sprite:set_anim("stand_" .. self.actor.dir)
   elseif self.mode == "walk" then
-    self.actor.body:setLinearVelocity(self.dx * 60, self.dy * 60)
+    self.actor.body:applyLinearImpulse(self.dx, self.dy)
     self.actor.sprite:set_anim("walk_" .. self.actor.dir)
   elseif self.mode == "chase" then
     local dir = math.angle(self.actor.x, self.actor.y, OVERWORLD.char.x, OVERWORLD.char.y)
     self.dx = math.cos(dir) * SLIME_CHASE_SPEED
     self.dy = math.sin(dir) * SLIME_CHASE_SPEED
-    self.actor.body:setLinearVelocity(self.dx * 60, self.dy * 60)
+    self.actor.body:applyLinearImpulse(self.dx, self.dy)
     self.actor.sprite:set_anim("walk_" .. self.actor.dir)
   end
 end
