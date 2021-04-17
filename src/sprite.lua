@@ -261,3 +261,46 @@ function Aiming:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
 end
+
+function draw_text(text, x, y)
+  text = tostring(text):lower()
+  local tex = load_texture("card_text")
+  local c, f, quad
+
+  for i=1, #text do
+    c = text:sub(i, i):byte()
+    if c >= 97 and c <= 122 then
+      -- a..z start at f10
+      f = c - 87
+    elseif c >= 48 and c <= 57 then
+      -- 0..9 start at f0
+      f = c - 48
+    else
+      -- ?
+      f = 39
+    end
+
+    -- don't even try drawing a space, okay
+    if c == 32 then
+      x = x + 4
+    else
+      quad = build_quad(atlas.text.frameset, f)
+
+      love.graphics.draw(
+        tex, quad,
+        S(x), S(y),
+        angle,
+        SCALE, SCALE
+      )
+
+      x = x + 8
+    end
+
+    -- special case I and T because their characters are 1px narrower
+    if c == 105 or c == 116 then
+      x = x - 1
+    end
+  end
+
+  return x
+end
