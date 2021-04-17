@@ -94,6 +94,8 @@ function Actor:update(dt)
         end
 
         self.status[k] = nil
+
+        OVERWORLD:add_sct("-" .. status.name, self.x, self.y + SCT_Y_OFFSET, SCT_COLORS[status.kind])
       end
     end
 
@@ -141,7 +143,16 @@ function Actor:apply(status, duration, stacks)
       duration=duration,
       stacks = math.min(max_stacks, stacks),
     }
+
   end
+
+  -- add SCT
+  local stack_string = ""
+  if self.status[status].stacks > 1 then
+    stack_string = " *" .. self.status[status].stacks
+  end
+
+  OVERWORLD:add_sct(status_db[status].name .. stack_string, self.x, self.y + SCT_Y_OFFSET, SCT_COLORS[status_db[status].kind])
 end
 
 function Actor:draw()

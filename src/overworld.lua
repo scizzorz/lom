@@ -154,10 +154,8 @@ function Overworld:update(top, dt)
     self.health = self.health + 1
   end
 
-  -- FIXME kill some of these
   local i = 1
   while i <= #self.sct do
-    print("iterating sct: " .. i)
     local sct = self.sct[i]
     sct:update(dt)
 
@@ -450,7 +448,7 @@ function Overworld:mousepressed(top, x, y, button)
     local dir = math.angle(self.char.x, self.char.y, self.en.x, self.en.y)
     if dist <= MELEE_RANGE then
       self.en.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
-      self:add_sct(2, self.en.x, self.en.y - 8, {r=0.7, g=0.2, b=0.2})
+      self:add_sct(2, self.en.x, self.en.y + SCT_Y_OFFSET, SCT_DAMAGE)
     end
   end
 

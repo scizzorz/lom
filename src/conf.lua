@@ -40,6 +40,19 @@ SCT_SPEED = 10
 SCT_FADE_START = 0.25
 SCT_DURATION = 1
 
+SCT_Y_OFFSET = -10
+
+SCT_BUFF = {r=0.7, g=0.5, b=0.2}
+SCT_DEBUFF = {r=0.2, g=0.5, b=0.7}
+SCT_DAMAGE = {r=0.7, g=0.2, b=0.2}
+SCT_HEAL = {r=0.2, g=0.7, b=0.2}
+SCT_COLORS = {
+  buff=SCT_BUFF,
+  debuff=SCT_DEBUFF,
+  heal=SCT_HEAL,
+  damage=SCT_DAMAGE,
+}
+
 -- menu cursor fade
 -- bigger is slower
 MENU_OPTION_SPEED = 4
