@@ -24,6 +24,9 @@ card_db = {
     name = "Cold Blood",
     art = "card_cold_blood",
     cost = 0,
+    cast = function(caster, x, y)
+      caster:apply("cold_blood")
+    end
   },
 }
 
@@ -32,5 +35,9 @@ status_db = {
     name = "Sprint",
     kind = "buff",
     effect = 1.5,
+  },
+  cold_blood = {
+    name = "Cold Blood",
+    kind = "buff",
   },
 }

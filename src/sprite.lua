@@ -206,20 +206,32 @@ end
 
 -- FIXME this should take a caster
 function Card:cast()
+  -- consume mana
   OVERWORLD.mana = OVERWORLD.mana - self:cost() * MANA_PARTS
 
   if self.data.cast then
+    -- get mouse target location
     local mx, my = love.mouse.getPosition()
     mx = s2p(mx - SCISSOR.x)
     my = s2p(my - SCISSOR.y)
 
     local action = function()
+      -- consume Cold Blood for the first cast otherwise Cold Blood applies and
+      -- then just consumes itself :(
+      if OVERWORLD.char.status.cold_blood then
+        self.data.cast(OVERWORLD.char, mx, my)
+        OVERWORLD.char.status.cold_blood = nil
+      end
+
       self.data.cast(OVERWORLD.char, mx, my)
+
+      -- initiate end lag
       if (self.data.endlag or 0) > 0 then
         OVERWORLD.char.lag = self.data.endlag
       end
     end
 
+    -- initiate start lag or cast instantly
     if (self.data.startlag or 0) > 0 then
       OVERWORLD.char.lag = self.data.startlag
       OVERWORLD.char.lag_action = action
