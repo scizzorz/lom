@@ -43,7 +43,7 @@ SCT_DURATION = 1
 SCT_Y_OFFSET = -10
 
 SCT_BUFF = {r=0.7, g=0.5, b=0.2}
-SCT_DEBUFF = {r=0.2, g=0.5, b=0.7}
+SCT_DEBUFF = {r=0.2, g=0.7, b=0.5}
 SCT_DAMAGE = {r=0.7, g=0.2, b=0.2}
 SCT_HEAL = {r=0.2, g=0.7, b=0.2}
 SCT_COLORS = {
