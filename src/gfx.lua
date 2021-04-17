@@ -108,13 +108,13 @@ atlas = {
     },
   },
 
-  mana_costs = {
-    texture = "card_mana_cost",
+  text = {
+    texture = "card_text",
     frameset = {
       tile_width = 9,
       tile_height = 11,
-      tex_width = 45,
-      tex_height = 22,
+      tex_width = 90,
+      tex_height = 44,
     },
   },
 

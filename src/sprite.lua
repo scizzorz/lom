@@ -124,7 +124,7 @@ function Card:init(id)
   self.tex = load_texture(self.data.art)
   self.back = load_texture("card_back")
 
-  self.digits = load_texture("card_mana_cost")
+  self.digits = load_texture("card_text")
 end
 
 function Card:cost()
@@ -141,7 +141,7 @@ function Card:update()
     self.fade = self.fade + (self.tfade - self.fade) / CARD_FADE_SPEED
   end
 
-  self.cost_quad = build_quad(atlas.mana_costs.frameset, self:cost())
+  self.cost_quad = build_quad(atlas.text.frameset, self:cost())
 end
 
 function Card:draw(usable, castable)
