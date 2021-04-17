@@ -416,6 +416,11 @@ end
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
+    local dist = math.sqrt((self.char.x - self.en.x)^2 + (self.char.y - self.en.y)^2)
+    local dir = math.angle(self.char.x, self.char.y, self.en.x, self.en.y)
+    if dist <= MELEE_RANGE then
+      self.en.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
+    end
   end
 
   -- right
