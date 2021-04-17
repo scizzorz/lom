@@ -28,6 +28,15 @@ card_db = {
       caster:apply("cold_blood")
     end
   },
+
+  thistle_tea = {
+    name = "Thistle Tea",
+    art = "card_blank",
+    cost = 0,
+    cast = function(caster, x, y)
+      OVERWORLD.mana = OVERWORLD.max_mana
+    end
+  },
 }
 
 status_db = {
