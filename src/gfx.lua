@@ -5,26 +5,52 @@ framesets = {
     tex_width = 175,
     tex_height = 200,
   },
+
+  slime = {
+    tile_width = 25,
+    tile_height = 25,
+    tex_width = 500,
+    tex_height = 25,
+  },
 }
 
 animations = {
   dummy = {
     stand_down = {0},
-    walk_down = {0, 1, 2, 3, 4, 5, 6, fps=10},
+    walk_down = {0, 1, 2, 3, 4, 5, 6, fps=9},
     stand_up = {7},
-    walk_up = {7, 8, 9, 10, 11, 12, 13, fps=10},
+    walk_up = {7, 8, 9, 10, 11, 12, 13, fps=9},
     stand_left = {14},
-    walk_left = {14, 15, 16, 17, 18, 19, 20, fps=10},
+    walk_left = {14, 15, 16, 17, 18, 19, 20, fps=9},
     stand_right = {21},
-    walk_right = {21, 22, 23, 24, 25, 26, 27, fps=10},
+    walk_right = {21, 22, 23, 24, 25, 26, 27, fps=9},
     stand_up_left = {42},
-    walk_up_left = {42, 43, 44, 45, 46, 47, 48, fps=10},
+    walk_up_left = {42, 43, 44, 45, 46, 47, 48, fps=9},
     stand_up_right = {35},
-    walk_up_right = {35, 36, 37, 38, 39, 40, 41, fps=10},
+    walk_up_right = {35, 36, 37, 38, 39, 40, 41, fps=9},
     stand_down_left = {49},
-    walk_down_left = {49, 50, 51, 52, 53, 54, 55, fps=10},
+    walk_down_left = {49, 50, 51, 52, 53, 54, 55, fps=9},
     stand_down_right = {28},
-    walk_down_right = {28, 29, 30, 31, 32, 33, 34, fps=10},
+    walk_down_right = {28, 29, 30, 31, 32, 33, 34, fps=9},
+  },
+
+  slime = {
+    stand_down = {8, 9, 10, fps=9},
+    walk_down = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_up = {8, 9, 10, fps=9},
+    walk_up = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_left = {8, 9, 10, fps=9},
+    walk_left = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_right = {8, 9, 10, fps=9},
+    walk_right = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_up_left = {8, 9, 10, fps=9},
+    walk_up_left = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_up_right = {8, 9, 10, fps=9},
+    walk_up_right = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_down_left = {8, 9, 10, fps=9},
+    walk_down_left = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
+    stand_down_right = {8, 9, 10, fps=9},
+    walk_down_right = {0, 1, 2, 3, 4, 5, 6, 7, fps=9},
   },
 }
 
@@ -33,6 +59,12 @@ atlas = {
     texture = "actor_dummy",
     frameset = framesets.dummy,
     anims = animations.dummy,
+  },
+
+  slime = {
+    texture = "actor_slime",
+    frameset = framesets.slime,
+    anims = animations.slime,
   },
 
   menu = {

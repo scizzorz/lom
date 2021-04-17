@@ -51,6 +51,19 @@ SELECTED_DEPTH = -20
 HAND_SPACING = 34
 HAND_ANGLE = 4
 
+-- slime behavior
+SLIME_WALK_SPEED = 0.25
+SLIME_WALK_MIN = 2
+SLIME_WALK_MAX = 4
+
+SLIME_STAND_MIN = 1
+SLIME_STAND_MAX = 3
+
+SLIME_CHASE_SPEED = 0.75
+SLIME_CHASE_RANGE = 75
+
+SLIME_ATTACK_RANGE = 25
+
 -- set to 0 for full 360 aiming; otherwise, it's the number lock steps
 AIMING_STEPS = 8
 

@@ -27,12 +27,13 @@ function Overworld:init()
   self.fade = 0
   self.tfade = 0
 
-  self.char = Char(self.world, 8, Sprite(atlas.dummy))
-  self.char.sprite.ox = 13
-  self.char.sprite.oy = 19
-  self.char.body:setX(WIDTH / 2)
+  self.char = Char(self, 8, Sprite(atlas.dummy))
+  self.char.body:setX(WIDTH / 2 - 60)
   self.char.body:setY(HEIGHT / 2)
-  self.char.dir = "down"
+
+  self.en = Slime(self)
+  self.en.body:setX(WIDTH / 2 + 60)
+  self.en.body:setY(HEIGHT / 2)
 
   self.map = Map(self.world, "map_arena", 400, 225, {
     {0, 0, 25, 0, 25, 225, 0, 225},
@@ -138,7 +139,8 @@ function Overworld:update(top, dt)
   self.map:update()
   self:update_mana_ui()
   self.ui_health:update(self.health)
-  self.char:update()
+  self.char:update(dt)
+  self.en:update(dt)
 
   if self.health < self.max_health then
     self.health = self.health + 1
@@ -224,6 +226,7 @@ end
 function Overworld:draw(top)
   self.map:draw()
   self.char:draw()
+  self.en:draw()
   self.ui_health:draw()
 
   for i, crystal in ipairs(self.ui_mana) do

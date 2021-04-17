@@ -44,20 +44,22 @@ function Map:draw_shape(shape)
   love.graphics.polygon("fill", points)
 end
 
-Char = Object:extend()
 
-function Char:init(world, size, sprite)
+Actor = Object:extend()
+
+function Actor:init(world, size, sprite)
   self.world = world
   self.sprite = sprite
   self.size = size
   self.shape = love.physics.newCircleShape(0, 0, size)
   self.body = love.physics.newBody(self.world, 0, 0, "dynamic")
+  self.body:setLinearDamping(30)
   self.fixture = love.physics.newFixture(self.body, self.shape)
 
   self:update()
 end
 
-function Char:update(dt)
+function Actor:update(dt)
   self.x = self.body:getX()
   self.y = self.body:getY()
   self.sprite.x = self.body:getX()
@@ -66,9 +68,98 @@ function Char:update(dt)
   self.sprite:update()
 end
 
-function Char:draw()
+function Actor:draw()
   love.graphics.setColor(0, 0, 1, 0.5)
   love.graphics.circle("fill", S(self.body:getX()), S(self.body:getY()), S(self.shape:getRadius()))
 
   self.sprite:draw()
+end
+
+Behavior = Object:extend()
+
+SlimeBehavior = Behavior:extend()
+
+function SlimeBehavior:init(actor)
+  self.actor = actor
+  self.mode = "stand"
+  self.timer = 4
+end
+
+function SlimeBehavior:update(dt)
+  dt = dt or 0
+
+  local dist = math.sqrt((self.actor.x - OVERWORLD.char.x) ^ 2 + (self.actor.y - OVERWORLD.char.y) ^ 2)
+
+  if dist <= SLIME_ATTACK_RANGE then
+    self.mode = "attack"
+    self.timer = 1
+  elseif dist <= SLIME_CHASE_RANGE then
+    self.mode = "chase"
+    self.timer = 1
+  end
+
+  self.timer = self.timer - dt
+  if self.timer < 0 then
+    self:choose_new()
+  end
+
+  if self.mode == "stand" then
+    self.actor.body:setLinearVelocity(0, 0)
+    self.actor.sprite:set_anim("stand_" .. self.actor.dir)
+  elseif self.mode == "walk" then
+    self.actor.body:setLinearVelocity(self.dx * 60, self.dy * 60)
+    self.actor.sprite:set_anim("walk_" .. self.actor.dir)
+  elseif self.mode == "chase" then
+    local dir = math.angle(self.actor.x, self.actor.y, OVERWORLD.char.x, OVERWORLD.char.y)
+    self.dx = math.cos(dir) * SLIME_CHASE_SPEED
+    self.dy = math.sin(dir) * SLIME_CHASE_SPEED
+    self.actor.body:setLinearVelocity(self.dx * 60, self.dy * 60)
+    self.actor.sprite:set_anim("walk_" .. self.actor.dir)
+  end
+end
+
+function SlimeBehavior:choose_new()
+
+  local walk = love.math.random(2)
+  if walk == 1 then
+    local dir = love.math.random(0, 7) * math.pi / 4
+    self.dx = math.cos(dir) * SLIME_WALK_SPEED
+    self.dy = math.sin(dir) * SLIME_WALK_SPEED
+    self.mode = "walk"
+    self.timer = love.math.random(SLIME_WALK_MIN, SLIME_WALK_MAX)
+  else
+    self.mode = "stand"
+    self.timer = love.math.random(SLIME_STAND_MIN, SLIME_STAND_MAX)
+  end
+end
+
+Char = Actor:extend()
+
+function Char:init(state)
+  self.__super.init(self, state.world, 8, Sprite(atlas.dummy))
+  self.state = state
+  self.sprite.ox = 13
+  self.sprite.oy = 19
+  self.dir = "down"
+end
+
+
+Slime = Actor:extend()
+
+function Slime:init(state)
+  self.__super.init(self, state.world, 12, Sprite(atlas.slime))
+  self.state = state
+  self.sprite.ox = 13
+  self.sprite.oy = 16
+  self.dir = "down"
+
+  self.behavior = SlimeBehavior(self)
+end
+
+function Slime:update(dt)
+  if self.behavior and dt then
+    self.behavior:update(dt)
+  end
+
+  self.__super.update(self, dt)
 end
