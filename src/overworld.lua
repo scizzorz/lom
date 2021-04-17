@@ -171,7 +171,7 @@ function Overworld:update(top, dt)
 
     card.angle = angle - math.pi / 2
 
-    if not card:castable(self) then
+    if not card:castable() then
       card.tfade = 1
     else
       card.tfade = 0
@@ -234,7 +234,7 @@ function Overworld:draw(top)
   end
 
   for i, card in ipairs(self.hand) do
-    card:draw(card:castable(self))
+    card:draw(card:usable(), card:castable())
   end
 
   for i, card in ipairs(self.deck) do
@@ -361,7 +361,7 @@ end
 function Overworld:use_card()
   local card = self.hand[self.card_sel]
   if card and card:castable(self) then
-    card:cast(self)
+    card:cast(self.char)
     self:discard_card(card)
     if self:ready_for_hand() then
       self:draw_hand()
@@ -371,7 +371,7 @@ end
 
 function Overworld:ready_for_hand()
   for i, card in ipairs(self.hand) do
-    if card:castable(self) then
+    if card:usable(self) then
       return false
     end
   end
@@ -446,7 +446,9 @@ function Overworld:wheelmoved(top, x, y)
 end
 
 function Overworld:move(x, y)
-  self.char.body:applyLinearImpulse(x, y)
+  if self.char.lag <= 0 then
+    self.char.body:applyLinearImpulse(x, y)
+  end
 end
 
 

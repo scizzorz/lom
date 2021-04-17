@@ -48,24 +48,44 @@ end
 Actor = Object:extend()
 
 function Actor:init(world, size, sprite)
-  self.world = world
-  self.sprite = sprite
   self.size = size
+  self.sprite = sprite
+
+  -- physics
+  self.world = world
   self.shape = love.physics.newCircleShape(0, 0, size)
   self.body = love.physics.newBody(self.world, 0, 0, "dynamic")
   self.body:setLinearDamping(ACTOR_LINEAR_DAMPING)
   self.fixture = love.physics.newFixture(self.body, self.shape)
 
+  -- actions
+  self.lag = 0
+
   self:update()
 end
 
 function Actor:update(dt)
+  dt = dt or 0
   self.x = self.body:getX()
   self.y = self.body:getY()
   self.sprite.x = self.body:getX()
   self.sprite.y = self.body:getY()
 
-  self.sprite:update()
+  self.sprite:update(dt)
+
+  if self.lag > 0 then
+    self.lag = self.lag - dt
+    if self.lag <= 0 then
+      self:cast()
+    end
+  end
+end
+
+function Actor:cast()
+  if self.lag_action then
+    self:lag_action()
+    self.lag_action = nil
+  end
 end
 
 function Actor:draw()

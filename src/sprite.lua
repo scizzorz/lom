@@ -144,7 +144,11 @@ function Card:update()
   self.cost_quad = build_quad(atlas.mana_costs.frameset, self:cost())
 end
 
-function Card:draw(castable)
+function Card:draw(usable, castable)
+  if usable == nil then
+    usable = true
+  end
+
   if castable == nil then
     castable = true
   end
@@ -157,7 +161,7 @@ function Card:draw(castable)
 
   -- draw card face, faded for mana
   else
-    -- fade unusable costs to grey-blue
+    -- fade uncastable costs to grey-blue
     love.graphics.setColor(1 - 0.6 * self.fade, 1 - 0.6 * self.fade, 1 - 0.5 * self.fade)
 
     -- draw card art
@@ -170,7 +174,9 @@ function Card:draw(castable)
     )
 
     -- fade unusable costs to red
-    love.graphics.setColor(1 - 0.3 * self.fade, 1 - 0.8 * self.fade, 1 - 0.8 * self.fade)
+    if not usable then
+      love.graphics.setColor(1 - 0.3 * self.fade, 1 - 0.8 * self.fade, 1 - 0.8 * self.fade)
+    end
 
     -- draw mana cost
     -- the magic numbers for offsetting this are derived from offsetting the
@@ -187,12 +193,41 @@ function Card:draw(castable)
   end
 end
 
-function Card:castable(overworld)
-  return overworld.mana >= self.data.cost * MANA_PARTS
+-- usable means this card _could_ be used, but something is temporarily
+-- blocking it, like another animation
+function Card:usable()
+  return OVERWORLD.mana >= self:cost() * MANA_PARTS
 end
 
-function Card:cast(overworld)
-  overworld.mana = overworld.mana - self.data.cost * MANA_PARTS
+-- castable means this card can currently be cast this frame
+function Card:castable()
+  return self:usable() and OVERWORLD.char.lag <= 0
+end
+
+-- FIXME this should take a caster
+function Card:cast()
+  OVERWORLD.mana = OVERWORLD.mana - self:cost() * MANA_PARTS
+
+  if self.data.cast then
+    local mx, my = love.mouse.getPosition()
+    mx = s2p(mx - SCISSOR.x)
+    my = s2p(my - SCISSOR.y)
+
+    local action = function()
+      self.data.cast(OVERWORLD.char, mx, my)
+      if (self.data.endlag or 0) > 0 then
+        OVERWORLD.char.lag = self.data.endlag
+      end
+    end
+
+    if (self.data.startlag or 0) > 0 then
+      OVERWORLD.char.lag = self.data.startlag
+      OVERWORLD.char.lag_action = action
+    else
+      action()
+    end
+  end
+
   return true
 end
 
