@@ -15,12 +15,10 @@ card_db = {
     name = "Sprint",
     art = "card_sprint",
     cost = 2,
-    startlag = 0.5,
-    endlag = 2,
     cast = function(caster, x, y)
       local dir = math.angle(caster.x, caster.y, x, y)
-      local dx = math.cos(dir) * 200
-      local dy = math.sin(dir) * 200
+      local dx = math.cos(dir) * 300
+      local dy = math.sin(dir) * 300
       caster.body:applyLinearImpulse(dx, dy)
     end
   },
