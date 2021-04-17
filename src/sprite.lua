@@ -178,6 +178,11 @@ function Card:draw(usable, castable)
       love.graphics.setColor(1 - 0.3 * self.fade, 1 - 0.8 * self.fade, 1 - 0.8 * self.fade)
     end
 
+    -- FIXME placeholder to draw name if the card doesn't have art
+    if self.tex == load_texture("card_blank") then
+      draw_text(self.data.name:sub(1, 4), self.x - 15, self.y - 8)
+    end
+
     -- draw mana cost
     -- the magic numbers for offsetting this are derived from offsetting the
     -- center of the cost by (-8.5, -13) from the center of the card.
