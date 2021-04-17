@@ -214,6 +214,10 @@ function Overworld:update(top, dt)
     ds = ds / math.sqrt(2)
   end
 
+  if self.char.status.sprint then
+    ds = ds * status_db.sprint.effect
+  end
+
   self:move(dx * ds, dy * ds)
   if dx ~= 0 or dy ~= 0 then
     self.char.sprite:set_anim("walk_" .. self.char.dir)
