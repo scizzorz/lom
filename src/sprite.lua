@@ -291,6 +291,13 @@ function SCT:update(dt)
   self.a = self.a + (self.ta - self.a) / SCT_SPEED
 end
 
+function SCT:done()
+  return self.timer <= 0
+end
+
+function SCT:deinit()
+end
+
 function SCT:draw()
   love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.a)
   draw_text(self.text, self.x - 4 * #self.text, self.y)

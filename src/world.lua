@@ -47,22 +47,27 @@ end
 
 Actor = Object:extend()
 
-function Actor:init(world, size, sprite)
+function Actor:init(state, size, sprite)
   self.size = size
   self.sprite = sprite
 
   -- physics
-  self.world = world
+  self.world = state.world
   self.shape = love.physics.newCircleShape(0, 0, size)
   self.body = love.physics.newBody(self.world, 0, 0, "dynamic")
   self.body:setLinearDamping(ACTOR_LINEAR_DAMPING)
   self.fixture = love.physics.newFixture(self.body, self.shape)
+
+  state:register_hurtbox(self.fixture, self)
 
   -- state
   self.lag = 0
   self.status = {}
 
   self:update()
+end
+
+function Actor:hurt(atk)
 end
 
 function Actor:update(dt)
@@ -224,7 +229,7 @@ end
 Char = Actor:extend()
 
 function Char:init(state)
-  self.__super.init(self, state.world, 8, Sprite(atlas.dummy))
+  self.__super.init(self, state, 8, Sprite(atlas.dummy))
   self.state = state
   self.sprite.ox = 13
   self.sprite.oy = 19
@@ -235,7 +240,7 @@ end
 Slime = Actor:extend()
 
 function Slime:init(state)
-  self.__super.init(self, state.world, 12, Sprite(atlas.slime))
+  self.__super.init(self, state, 12, Sprite(atlas.slime))
   self.state = state
   self.sprite.ox = 13
   self.sprite.oy = 16

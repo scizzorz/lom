@@ -1,3 +1,4 @@
+require("attack")
 require("data")
 require("gfx")
 require("sprite")
@@ -19,6 +20,11 @@ end
 function Overworld:init()
   self.world = love.physics.newWorld(0, 0, false)
 
+  self.world:setCallbacks(
+    function(...) self:begin_contact(...) end,
+    function(...) self:end_contact(...) end
+  )
+
   local map_size = 240
   local tile_size = 16
   local map_width = math.ceil(WIDTH / tile_size) + 2
@@ -26,14 +32,6 @@ function Overworld:init()
 
   self.fade = 0
   self.tfade = 0
-
-  self.char = Char(self, 8, Sprite(atlas.dummy))
-  self.char.body:setX(WIDTH / 2 - 60)
-  self.char.body:setY(HEIGHT / 2)
-
-  self.en = Slime(self)
-  self.en.body:setX(WIDTH / 2 + 60)
-  self.en.body:setY(HEIGHT / 2)
 
   -- draw the map and its obstacles
   self.map = Map(self.world, "map_arena", 400, 225, {
@@ -49,6 +47,13 @@ function Overworld:init()
 
   -- scrolling combat text
   self.sct = {}
+
+  -- attacks
+  self.attacks = {}
+
+  -- collision
+  self.hurtboxes = {}
+  self.hitboxes = {}
 
   self.max_mana = MAX_MANA * MANA_PARTS
   self.mana = 0
@@ -84,6 +89,15 @@ function Overworld:init()
     table.insert(self.deck, card)
   end
 
+  -- init characters
+  self.char = Char(self, 8, Sprite(atlas.dummy))
+  self.char.body:setX(WIDTH / 2 - 60)
+  self.char.body:setY(HEIGHT / 2)
+
+  self.en = Slime(self)
+  self.en.body:setX(WIDTH / 2 + 60)
+  self.en.body:setY(HEIGHT / 2)
+
   -- prep graphics so they don't jump during the transition state
   self.map:update()
   self:aim()
@@ -93,6 +107,50 @@ end
 
 function Overworld:add_sct(...)
   table.insert(self.sct, SCT(...))
+end
+
+function Overworld:add_attack(atk)
+  table.insert(self.attacks, atk)
+end
+
+-- hurtboxes are offensive
+function Overworld:register_hitbox(fixture, hitbox)
+  print("hitbox[" .. tostring(fixture) .. "] = " .. tostring(hitbox))
+  self.hitboxes[fixture] = hitbox
+end
+
+function Overworld:deregister_hitbox(fixture)
+  self.hitboxes[fixture] = nil
+end
+
+-- hitboxes are defensive
+function Overworld:register_hurtbox(fixture, hurtbox)
+  print("hurtbox[" .. tostring(fixture) .. "] = " .. tostring(hurtbox))
+  self.hurtboxes[fixture] = hurtbox
+end
+
+function Overworld:deregister_hurtbox(fixture)
+  self.hurtboxes[fixture] = nil
+end
+
+-- physics callbacks
+function Overworld:begin_contact(fix1, fix2, contact)
+  print("contact from " .. tostring(fix1) .. " => " .. tostring(fix2))
+  if self.hitboxes[fix1] and self.hurtboxes[fix2] then
+    print("fix1 is hitbox")
+    self.hitboxes[fix1]:hit(self.hurtboxes[fix2])
+    self.hurtboxes[fix2]:hurt(self.hitboxes[fix1])
+  end
+
+  if self.hitboxes[fix2] and self.hurtboxes[fix1] then
+    print("fix2 is hitbox")
+    self.hitboxes[fix2]:hit(self.hurtboxes[fix1])
+    self.hurtboxes[fix1]:hurt(self.hitboxes[fix2])
+  end
+end
+
+function Overworld:end_contact(fix1, fix2, contact)
+  print("end contact")
 end
 
 function Overworld:aim()
@@ -159,8 +217,22 @@ function Overworld:update(top, dt)
     local sct = self.sct[i]
     sct:update(dt)
 
-    if sct.timer <= 0 then
+    if sct:done() then
+      sct:deinit()
       table.remove(self.sct, i)
+    else
+      i = i + 1
+    end
+  end
+
+  local i = 1
+  while i <= #self.attacks do
+    local atk = self.attacks[i]
+    atk:update(dt)
+
+    if atk:done() then
+      atk:deinit()
+      table.remove(self.attacks, i)
     else
       i = i + 1
     end
@@ -205,18 +277,20 @@ function Overworld:update(top, dt)
   local dx = 0
   local dy = 0
 
-  if love.keyboard.isDown(KEYBINDINGS.left) then
-    dx = dx - 1
-  end
-  if love.keyboard.isDown(KEYBINDINGS.right) then
-    dx = dx + 1
-  end
+  if self.char.lag <= 0 then
+    if love.keyboard.isDown(KEYBINDINGS.left) then
+      dx = dx - 1
+    end
+    if love.keyboard.isDown(KEYBINDINGS.right) then
+      dx = dx + 1
+    end
 
-  if love.keyboard.isDown(KEYBINDINGS.up) then
-    dy = dy - 1
-  end
-  if love.keyboard.isDown(KEYBINDINGS.down) then
-    dy = dy + 1
+    if love.keyboard.isDown(KEYBINDINGS.up) then
+      dy = dy - 1
+    end
+    if love.keyboard.isDown(KEYBINDINGS.down) then
+      dy = dy + 1
+    end
   end
 
   local dirs = {
@@ -242,7 +316,6 @@ function Overworld:update(top, dt)
   if dx ~= 0 or dy ~= 0 then
     self.char.sprite:set_anim("walk_" .. self.char.dir)
   else
-    self:aim()
     self.char.sprite:set_anim("stand_" .. self.char.dir)
   end
 end
@@ -271,6 +344,10 @@ function Overworld:draw(top)
 
   for i, sct in ipairs(self.sct) do
     sct:draw()
+  end
+
+  for i, atk in ipairs(self.attacks) do
+    atk:draw()
   end
 
   if self.fade > 0 then
@@ -444,11 +521,20 @@ end
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
+    --[[
     local dist = math.sqrt((self.char.x - self.en.x)^2 + (self.char.y - self.en.y)^2)
     local dir = math.angle(self.char.x, self.char.y, self.en.x, self.en.y)
     if dist <= MELEE_RANGE then
       self.en.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
       self:add_sct(2, self.en.x, self.en.y + SCT_Y_OFFSET, SCT_DAMAGE)
+    end
+    ]]
+
+    if self.char.lag <= 0 then
+      self:aim()
+      self.char.sprite:set_anim("stand_" .. self.char.dir)
+      self.char.lag = ATTACK_DURATION
+      self:add_attack(Attack(self, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
     end
   end
 
@@ -475,9 +561,7 @@ function Overworld:wheelmoved(top, x, y)
 end
 
 function Overworld:move(x, y)
-  if self.char.lag <= 0 then
-    self.char.body:applyLinearImpulse(x, y)
-  end
+  self.char.body:applyLinearImpulse(x, y)
 end
 
 

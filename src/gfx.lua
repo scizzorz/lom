@@ -67,6 +67,16 @@ atlas = {
     anims = animations.slime,
   },
 
+  slash = {
+    texture = "atk_slash",
+    frameset = {
+      tile_width = 25,
+      tile_height = 25,
+      tex_width = 200,
+      tex_height = 25,
+    },
+  },
+
   menu = {
     texture = "ui_menu",
     frameset = {

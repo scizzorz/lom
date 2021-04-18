@@ -22,3 +22,15 @@ end
 function s2p(v)
   return v / SCALE / CANVAS_SCALE
 end
+
+
+DIR_TO_ANGLE = {
+ left = math.pi * 4 / 4,
+ up_left = -math.pi * 3 / 4,
+ up = -math.pi * 2 / 4,
+ up_right = -math.pi * 1 / 4,
+ right = math.pi * 0 / 4,
+ down_right = math.pi * 1 / 4,
+ down = math.pi * 2 / 4,
+ down_left = math.pi * 3 / 4,
+}
