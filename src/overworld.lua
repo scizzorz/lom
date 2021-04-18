@@ -17,7 +17,7 @@ function choose(from)
 end
 
 function Overworld:init()
-  self.world = love.physics.newWorld(0, 0, true)
+  self.world = love.physics.newWorld(0, 0, false)
 
   local map_size = 240
   local tile_size = 16
