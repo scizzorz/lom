@@ -115,7 +115,6 @@ end
 
 -- hurtboxes are offensive
 function Overworld:register_hitbox(fixture, hitbox)
-  print("hitbox[" .. tostring(fixture) .. "] = " .. tostring(hitbox))
   self.hitboxes[fixture] = hitbox
 end
 
@@ -125,7 +124,6 @@ end
 
 -- hitboxes are defensive
 function Overworld:register_hurtbox(fixture, hurtbox)
-  print("hurtbox[" .. tostring(fixture) .. "] = " .. tostring(hurtbox))
   self.hurtboxes[fixture] = hurtbox
 end
 
@@ -135,22 +133,18 @@ end
 
 -- physics callbacks
 function Overworld:begin_contact(fix1, fix2, contact)
-  print("contact from " .. tostring(fix1) .. " => " .. tostring(fix2))
   if self.hitboxes[fix1] and self.hurtboxes[fix2] then
-    print("fix1 is hitbox")
     self.hitboxes[fix1]:hit(self.hurtboxes[fix2])
     self.hurtboxes[fix2]:hurt(self.hitboxes[fix1])
   end
 
   if self.hitboxes[fix2] and self.hurtboxes[fix1] then
-    print("fix2 is hitbox")
     self.hitboxes[fix2]:hit(self.hurtboxes[fix1])
     self.hurtboxes[fix1]:hurt(self.hitboxes[fix2])
   end
 end
 
 function Overworld:end_contact(fix1, fix2, contact)
-  print("end contact")
 end
 
 function Overworld:aim()

@@ -16,7 +16,7 @@ function Attack:init(state, x, y, angle)
   self.state = state
   self.world = state.world
   self.shape = love.physics.newCircleShape(0, 0, ATTACK_SIZE)
-  self.body = love.physics.newBody(self.world, 0, 0, "dynamic")
+  self.body = love.physics.newBody(self.world, 0, 0, "static")
   self.body:setBullet(true)
   self.fixture = love.physics.newFixture(self.body, self.shape)
   self.fixture:setSensor(true)
@@ -35,8 +35,6 @@ function Attack:update(dt)
   dt = dt or 0
   self.elapsed = self.elapsed + dt
 
-  print("awake = " .. tostring(self.body:isAwake()))
-
   local angle = self.angle - ATTACK_ARC / 2 + self.elapsed / ATTACK_DURATION * ATTACK_ARC
   self.body:setX(self.x + math.cos(angle) * ATTACK_RANGE)
   self.body:setY(self.y + math.sin(angle) * ATTACK_RANGE)
@@ -45,11 +43,10 @@ end
 function Attack:hit(target)
   local dist = math.sqrt((self.x - target.x)^2 + (self.y - target.y)^2)
   local dir = math.angle(self.x, self.y, target.x, target.y)
-  if dist <= MELEE_RANGE then
-    target.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
-    self.state:add_sct(2, target.x, target.y + SCT_Y_OFFSET, SCT_DAMAGE)
-    self.state:add_attack(Slash(self.state, target.x, target.y))
-  end
+
+  target.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
+  self.state:add_sct(2, target.x, target.y + SCT_Y_OFFSET, SCT_DAMAGE)
+  self.state:add_attack(Slash(self.state, target.x, target.y))
 end
 
 function Attack:deinit()
