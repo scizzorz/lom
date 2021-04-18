@@ -529,7 +529,7 @@ function Overworld:mousepressed(top, x, y, button)
     if self.char.lag <= 0 then
       self:aim()
       self.char.sprite:set_anim("stand_" .. self.char.dir)
-      self.char.lag = ATTACK_DURATION
+      self.char.lag = ATTACK_LAG
       self:add_attack(Attack(self, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
     end
   end

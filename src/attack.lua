@@ -6,7 +6,8 @@ require("util")
 Attack = Object:extend()
 
 ATTACK_DURATION = 0.125
-ATTACK_ARC = math.pi / 2
+ATTACK_LAG = 0.25
+ATTACK_ARC = math.pi / 1
 ATTACK_SIZE = 4
 ATTACK_RANGE = 16
 
