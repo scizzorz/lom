@@ -133,14 +133,16 @@ end
 
 -- physics callbacks
 function Overworld:begin_contact(fix1, fix2, contact)
+  -- fix1 is the offensive fixture
   if self.hitboxes[fix1] and self.hurtboxes[fix2] then
-    self.hitboxes[fix1]:hit(self.hurtboxes[fix2])
-    self.hurtboxes[fix2]:hurt(self.hitboxes[fix1])
+    self.hitboxes[fix1]:hit(self.hurtboxes[fix2], fix2)
+    self.hurtboxes[fix2]:hurt(self.hitboxes[fix1], fix1)
   end
 
+  -- fix2 is the offensive fixture
   if self.hitboxes[fix2] and self.hurtboxes[fix1] then
-    self.hitboxes[fix2]:hit(self.hurtboxes[fix1])
-    self.hurtboxes[fix1]:hurt(self.hitboxes[fix2])
+    self.hitboxes[fix2]:hit(self.hurtboxes[fix1], fix1)
+    self.hurtboxes[fix1]:hurt(self.hitboxes[fix2], fix2)
   end
 end
 

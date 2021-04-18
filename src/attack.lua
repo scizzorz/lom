@@ -29,6 +29,8 @@ function Attack:init(state, x, y, angle)
   self.elapsed = 0
 
   self:update()
+
+  self.collisions = {}
 end
 
 function Attack:update(dt)
@@ -40,7 +42,12 @@ function Attack:update(dt)
   self.body:setY(self.y + math.sin(angle) * ATTACK_RANGE)
 end
 
-function Attack:hit(target)
+function Attack:hit(target, fix)
+  if self.collisions[fix] then
+    return
+  end
+
+  self.collisions[fix] = true
   local dist = math.sqrt((self.x - target.x)^2 + (self.y - target.y)^2)
   local dir = math.angle(self.x, self.y, target.x, target.y)
 
