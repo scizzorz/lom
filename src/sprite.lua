@@ -350,6 +350,11 @@ function draw_text(text, x, y)
 end
 
 function draw_cd(cd, x, y, w, h, r, g, b, a)
+  r = r or 1
+  g = g or 1
+  b = b or 1
+  a = a or 0.5
+
   local angle = cd * math.pi * 2 - math.pi / 2
   local dx = math.cos(angle)
   local dy = math.sin(angle)
@@ -405,4 +410,8 @@ function draw_cd(cd, x, y, w, h, r, g, b, a)
 
   love.graphics.setColor(r or 1, g or 1, b or 1, a or 0.5)
   love.graphics.polygon("fill", vertices)
+
+  love.graphics.setColor(1 - r, 1 - g, 1 - b, 1 - a)
+  love.graphics.setLineWidth(2)
+  love.graphics.line(S(x + w / 2), S(y + w / 2), S(cx), S(cy))
 end
