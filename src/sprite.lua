@@ -365,38 +365,43 @@ function draw_cd(cd, x, y, w, h, r, g, b, a)
   cx = math.min(math.max(cx, x), x + w)
   cy = math.min(math.max(cy, y), y + h)
 
-  local vertices = {
-    S(x + w / 2), S(y + h / 2), -- center
-    S(cx), S(cy), -- cooldown point
-  }
+  local vertices = {}
 
-  if cd < 0.125 then
+  -- center
+  table.insert(vertices, S(x + w / 2))
+  table.insert(vertices, S(y + h / 2))
+
+  -- top middle
+  table.insert(vertices, S(x + w / 2))
+  table.insert(vertices, S(y))
+
+  if cd > 0.125 then
     -- top right corner
     table.insert(vertices, S(x + w))
     table.insert(vertices, S(y))
   end
 
-  if cd < 0.375 then
+  if cd > 0.375 then
     -- bottom right corner
     table.insert(vertices, S(x + w))
     table.insert(vertices, S(y + h))
   end
 
-  if cd < 0.625 then
+  if cd > 0.625 then
     -- bottom left corner
     table.insert(vertices, S(x))
     table.insert(vertices, S(y + h))
   end
 
-  if cd < 0.875 then
+  if cd > 0.875 then
     -- top left
     table.insert(vertices, S(x))
     table.insert(vertices, S(y))
   end
 
-  -- top middle
-  table.insert(vertices, S(x + w / 2))
-  table.insert(vertices, S(y))
+  -- cooldown point
+  table.insert(vertices, S(cx))
+  table.insert(vertices, S(cy))
 
   love.graphics.setColor(r or 1, g or 1, b or 1, a or 0.5)
   love.graphics.polygon("fill", vertices)
