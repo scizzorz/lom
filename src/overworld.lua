@@ -346,6 +346,25 @@ function Overworld:draw(top)
     atk:draw()
   end
 
+  local status_quad = love.graphics.newQuad(0, 0, 16, 16, 16, 16)
+  local sx = WIDTH - 17
+  local sy = 1
+  for k, v in pairs(self.char.status) do
+    local status = status_db[k]
+    if status.art then
+      local tex = load_texture(status.art)
+
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(tex, status_quad, S(sx), S(sy), 0, SCALE, SCALE)
+
+      if v.duration then
+        draw_cd(1 - v.duration / v.max_duration, sx + 1, sy + 1, 14, 14, 0, 0, 0, 0.5)
+      end
+
+      sx = sx - 18
+    end
+  end
+
   if self.fade > 0 then
     -- black out the screen
     -- FIXME there's bug here sometimes?

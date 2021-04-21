@@ -97,12 +97,14 @@ status_db = {
   sprint = {
     name = "Sprint",
     kind = "buff",
+    art = "status_sprint",
     effect = 2,
   },
 
   cold_blood = {
     name = "Cold Blood",
     kind = "buff",
+    art = "status_cold_blood",
   },
 
   deadly_poison_coating = {
