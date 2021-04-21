@@ -355,8 +355,9 @@ function Overworld:draw(top)
 
       love.graphics.setColor(1, 1, 1, 1)
       love.graphics.draw(tex, status_quad, S(sx), S(8), 0, SCALE, SCALE)
+
       if v.duration then
-        draw_cd(v.duration / v.max_duration, sx, 8, 30, 30)
+        draw_cd(1 - v.duration / v.max_duration, sx + 1, 9, 28, 28, 0, 0, 0, 0.7)
       end
 
       sx = sx + 36
