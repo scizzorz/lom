@@ -225,7 +225,7 @@ function Card:cast()
       -- then just consumes itself :(
       if OVERWORLD.char.status.cold_blood then
         self.data.cast(OVERWORLD.char, mx, my)
-        OVERWORLD.char.status.cold_blood = nil
+        OVERWORLD.char:purge("cold_blood")
       end
 
       self.data.cast(OVERWORLD.char, mx, my)
