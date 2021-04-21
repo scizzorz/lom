@@ -4,24 +4,24 @@ card_db = {
     art = "card_eviscerate",
     cost = 1,
   },
-  
+
   lacerate = {
     name = "Lacerate",
     art = "card_lacerate",
     cost = 4,
   },
-  
+
   hemorrhage = {
     name = "Hemorrhage",
     art = "card_hemo",
     cost = 2,
-  },  
-  
+  },
+
   garrote = {
     name = "Garrote",
     art = "card_garrote",
     cost = 4,
-  },  
+  },
 
   ambush = {
     name = "Ambush",
@@ -127,18 +127,13 @@ status_db = {
     kind = "buff",
   },
 
-  slice_and_dice = {
-    name = "Slice and Dice",
-    kind = "buff",
-  },
-
   bleed = {
     name = "Bleed",
     kind = "debuff",
   },
 
   deadly_poison = {
-    name = "Bleed",
+    name = "Deadly Poison",
     kind = "debuff",
   },
 }
