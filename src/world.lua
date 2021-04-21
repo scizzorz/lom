@@ -99,7 +99,6 @@ function Actor:update(dt)
         end
 
         self.status[k] = nil
-
         OVERWORLD:add_sct("-" .. status.name, self.x, self.y + SCT_Y_OFFSET, SCT_COLORS[status.kind])
       end
     end
@@ -158,6 +157,23 @@ function Actor:apply(status, duration, stacks)
   end
 
   OVERWORLD:add_sct(status_db[status].name .. stack_string, self.x, self.y + SCT_Y_OFFSET, SCT_COLORS[status_db[status].kind])
+end
+
+-- purge a buff / debuff effect
+function Actor:purge(name)
+  local status = status_db[name]
+  local cur = self.status[name]
+
+  if cur then
+    self.status[name] = nil
+
+    -- check if there's an on-fade effect
+    if status.purge then
+      status.purge(cur, self)
+    end
+
+    OVERWORLD:add_sct("-" .. status.name, self.x, self.y + SCT_Y_OFFSET, SCT_COLORS[status.kind])
+  end
 end
 
 function Actor:draw()
