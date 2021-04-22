@@ -14,7 +14,7 @@ ACTOR_LINEAR_DAMPING = 30
 
 -- game play config
 PLAYER_SPEED = 8
-MAX_HAND_SIZE = 5
+HAND_SIZE = 5
 DECK_SIZE = 25
 
 -- temp
@@ -72,9 +72,9 @@ SHUFFLE_DELAY = 0
 
 -- hand positioning
 HAND_DEPTH = 6
-SELECTED_DEPTH = -20
-HAND_SPACING = 34
-HAND_ANGLE = 4
+SELECTED_DEPTH = -18
+HAND_SPACING = 30
+HAND_ANGLE = 3
 
 -- slime behavior
 SLIME_WALK_SPEED = 4
