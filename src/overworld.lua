@@ -61,6 +61,7 @@ function Overworld:init()
   self.max_health = MAX_HEALTH
   self.health = 0
 
+  self.draw_timers = {}
   self.hand = {}
   self.deck = {}
   self.discard = {}
@@ -205,6 +206,17 @@ function Overworld:update(top, dt)
 
   if self.health < self.max_health then
     self.health = self.health + 1
+  end
+
+  local i = 1
+  while i <= #self.draw_timers do
+    self.draw_timers[i] = self.draw_timers[i] - dt
+    if self.draw_timers[i] <= 0 then
+      table.remove(self.draw_timers, i)
+      self:draw_card()
+    else
+      i = i + 1
+    end
   end
 
   local i = 1
@@ -405,14 +417,7 @@ function Overworld:keypressed(top, key)
 
   if keymap[key] ~= nil and keymap[key] <= HAND_SIZE then
     local slot = keymap[key]
-    local card = self.hand[slot]
-    if card and card:castable(self) then
-      card:cast(self.char)
-      self:discard_card(card)
-      if self:ready_for_hand() then
-        self:draw_hand()
-      end
-    end
+    self:use_card(slot)
 
   elseif key == KEYBINDINGS.menu then
     ENGINE:push_state(Menu({
@@ -459,6 +464,7 @@ function Overworld:draw_card()
   for i=1, HAND_SIZE do
     if self.hand[i] == nil then
       slot = i
+      break
     end
   end
 
@@ -472,6 +478,14 @@ function Overworld:draw_card()
   self.hand[slot] = card
 end
 
+function Overworld:use_card(slot)
+  local card = self.hand[slot]
+  if card and card:castable(self) then
+    card:cast(self.char)
+    self:discard_card(card)
+  end
+end
+
 function Overworld:discard_card(card)
   for i=1, HAND_SIZE do
     if card == self.hand[i] then
@@ -479,6 +493,8 @@ function Overworld:discard_card(card)
       break
     end
   end
+
+  table.insert(self.draw_timers, DRAW_TIMER)
 
   card.angle = 0
   card.tx = 0
@@ -543,6 +559,8 @@ function Overworld:mousepressed(top, x, y, button)
       self.char.sprite:set_anim("stand_" .. self.char.dir)
       self.char.lag = ATTACK_LAG
       self:add_attack(Attack(self, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
+
+      self.mana = self.mana + MANA_PARTS / 5
     end
   end
 
