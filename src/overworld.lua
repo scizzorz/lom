@@ -14,10 +14,6 @@ for name, data in pairs(card_db) do
   table.insert(library, name)
 end
 
-function choose(from)
-  return from[math.random(#from)]
-end
-
 function Overworld:init()
   self.world = love.physics.newWorld(0, 0, false)
 

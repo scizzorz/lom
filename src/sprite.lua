@@ -53,10 +53,13 @@ function Sprite:draw(no_color)
     love.graphics.setColor(1, 1, 1)
   end
 
-  love.graphics.draw(self.tex, self.quad,
-                    S(self.x), S(self.y), self.angle,
-                    SCALE * self.sx, SCALE * self.sy,
-                    self.ox, self.oy)
+  love.graphics.draw(
+    self.tex, self.quad,
+    S(self.x), S(self.y),
+    self.angle,
+    SCALE * self.sx, SCALE * self.sy,
+    self.ox, self.oy
+  )
 end
 
 HealthBar = Object:extend()
@@ -101,6 +104,9 @@ end
 
 Card = Object:extend()
 
+CARD_QUAD = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
+ART_QUAD = love.graphics.newQuad(0, 0, 28, 40, 28, 40)
+
 function Card:init(id)
   self.id = id
   self.data = card_db[id]
@@ -120,10 +126,9 @@ function Card:init(id)
   self.fade = 0
   self.tfade = 0
 
-  self.quad = love.graphics.newQuad(0, 0, 30, 42, 30, 42)
-  self.tex = load_texture(self.data.art)
+  self.art = load_texture(self.data.art)
   self.back = load_texture("card_back")
-
+  self.border = load_texture("card_border")
   self.digits = load_texture("card_text")
 end
 
@@ -157,7 +162,13 @@ function Card:draw(usable, castable)
 
   -- draw card back
   if self.flip > 0.5 then
-    love.graphics.draw(self.back, self.quad, S(self.x), S(self.y), self.angle, SCALE * 2 * (self.flip - 0.5), SCALE, self.ox, self.oy)
+    love.graphics.draw(
+      self.back, CARD_QUAD,
+      S(self.x), S(self.y),
+      self.angle,
+      SCALE * 2 * (self.flip - 0.5), SCALE,
+      self.ox, self.oy
+    )
 
   -- draw card face, faded for mana
   else
@@ -166,7 +177,16 @@ function Card:draw(usable, castable)
 
     -- draw card art
     love.graphics.draw(
-      self.tex, self.quad,
+      self.art, ART_QUAD,
+      S(self.x), S(self.y),
+      self.angle,
+      SCALE * 2 * (0.5 - self.flip), SCALE,
+      self.ox - 1, self.oy - 1
+    )
+
+    -- draw card border
+    love.graphics.draw(
+      self.border, CARD_QUAD,
       S(self.x), S(self.y),
       self.angle,
       SCALE * 2 * (0.5 - self.flip), SCALE,
@@ -179,7 +199,7 @@ function Card:draw(usable, castable)
     end
 
     -- FIXME placeholder to draw name if the card doesn't have art
-    if self.tex == load_texture("card_blank") then
+    if self.art == load_texture("card_blank") then
       draw_text(self.data.name:sub(1, 4), self.x - 15, self.y - 8)
     end
 
