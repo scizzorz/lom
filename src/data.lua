@@ -171,7 +171,7 @@ card_db = {
 
   thistle_tea = {
     name = "Thistle Tea",
-    art = "card_blank",
+    art = "card_thistle_tea",
     cost = 0,
     cast = function(caster, x, y)
       OVERWORLD.mana = OVERWORLD.max_mana
@@ -180,7 +180,7 @@ card_db = {
 
   deadly_poison = {
     name = "Deadly Poison",
-    art = "card_blank",
+    art = "card_deadly_poison",
     cost = 1,
     cast = function(caster, x, y)
       caster:apply("deadly_poison_coating", 60)
@@ -189,7 +189,7 @@ card_db = {
 
   instant_poison = {
     name = "Instant Poison",
-    art = "card_blank",
+    art = "card_instant_poison",
     cost = 1,
     cast = function(caster, x, y)
       caster:apply("instant_poison_coating", 60)
@@ -207,10 +207,34 @@ card_db = {
 
   slice_and_dice = {
     name = "Slice and Dice",
-    art = "card_blank",
+    art = "card_slice_and_dice",
     cost = 1,
     cast = function(caster, x, y)
       caster:apply("slice_and_dice", 10)
     end
+  },
+
+  shiv = {
+    name = "Shiv",
+    art = "card_shiv",
+    cost = 0,
+  },
+
+  shiv = {
+    name = "Infected Wounds",
+    art = "card_infected_wounds",
+    cost = 5,
+  },
+
+  mutilate = {
+    name = "Mutilate",
+    art = "card_mutilate",
+    cost = 1,
+  },
+
+  rupture = {
+    name = "Rupture",
+    art = "card_rupture",
+    cost = 4,
   },
 }
