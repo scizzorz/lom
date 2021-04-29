@@ -14,12 +14,12 @@ ACTOR_LINEAR_DAMPING = 30
 
 -- game play config
 PLAYER_SPEED = 8
-MAX_HAND_SIZE = 5
+HAND_SIZE = 5
 DECK_SIZE = 25
+DRAW_TIMER = 8
 
 -- temp
 MELEE_RANGE = 25
-MELEE_ATTACK_WEIGHT = 60
 
 -- health config
 MAX_HEALTH = 100
@@ -46,11 +46,15 @@ SCT_BUFF = {r=0.7, g=0.5, b=0.2}
 SCT_DEBUFF = {r=0.2, g=0.7, b=0.5}
 SCT_DAMAGE = {r=0.7, g=0.2, b=0.2}
 SCT_HEAL = {r=0.2, g=0.7, b=0.2}
+SCT_MANA = {r=0.2, g=0.2, b=0.7}
+SCT_MANABURN = {r=0.7, g=0.2, b=0.7}
 SCT_COLORS = {
   buff=SCT_BUFF,
   debuff=SCT_DEBUFF,
   heal=SCT_HEAL,
   damage=SCT_DAMAGE,
+  mana=SCT_MANA,
+  manaburn=SCT_MANABURN,
 }
 
 -- menu cursor fade
@@ -72,9 +76,9 @@ SHUFFLE_DELAY = 0
 
 -- hand positioning
 HAND_DEPTH = 6
-SELECTED_DEPTH = -20
-HAND_SPACING = 34
-HAND_ANGLE = 4
+SELECTED_DEPTH = -18
+HAND_SPACING = 30
+HAND_ANGLE = 3
 
 -- slime behavior
 SLIME_WALK_SPEED = 4

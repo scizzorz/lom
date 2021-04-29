@@ -1,6 +1,7 @@
 require("attack")
 require("data")
 require("gfx")
+require("particles")
 require("sprite")
 require("util")
 require("world")
@@ -11,10 +12,6 @@ local library = {}
 
 for name, data in pairs(card_db) do
   table.insert(library, name)
-end
-
-function choose(from)
-  return from[math.random(#from)]
 end
 
 function Overworld:init()
@@ -45,11 +42,8 @@ function Overworld:init()
     {100, 100, 125, 100, 125, 125, 100, 125},
   })
 
-  -- scrolling combat text
-  self.sct = {}
-
-  -- attacks
-  self.attacks = {}
+  -- particles (SCT, attacks, floaties, etc)
+  self.particles = {}
 
   -- collision
   self.hurtboxes = {}
@@ -61,7 +55,7 @@ function Overworld:init()
   self.max_health = MAX_HEALTH
   self.health = 0
 
-  self.card_sel = 0
+  self.draw_timers = {}
   self.hand = {}
   self.deck = {}
   self.discard = {}
@@ -106,11 +100,15 @@ function Overworld:init()
 end
 
 function Overworld:add_sct(...)
-  table.insert(self.sct, SCT(...))
+  table.insert(self.particles, SCT(...))
 end
 
-function Overworld:add_attack(atk)
-  table.insert(self.attacks, atk)
+function Overworld:add_particle(kind, ...)
+  table.insert(self.particles, kind(self, ...))
+end
+
+function Overworld:add_attack(kind, effects, ...)
+  table.insert(self.particles, kind(self, effects, ...))
 end
 
 -- hurtboxes are offensive
@@ -135,14 +133,14 @@ end
 function Overworld:begin_contact(fix1, fix2, contact)
   -- fix1 is the offensive fixture
   if self.hitboxes[fix1] and self.hurtboxes[fix2] then
-    self.hitboxes[fix1]:hit(self.hurtboxes[fix2], fix2)
-    self.hurtboxes[fix2]:hurt(self.hitboxes[fix1], fix1)
+    self.hitboxes[fix1]:on_hit(self.hurtboxes[fix2], fix2)
+    self.hurtboxes[fix2]:on_hurt(self.hitboxes[fix1], fix1)
   end
 
   -- fix2 is the offensive fixture
   if self.hitboxes[fix2] and self.hurtboxes[fix1] then
-    self.hitboxes[fix2]:hit(self.hurtboxes[fix1], fix1)
-    self.hurtboxes[fix1]:hurt(self.hitboxes[fix2], fix2)
+    self.hitboxes[fix2]:on_hit(self.hurtboxes[fix1], fix1)
+    self.hurtboxes[fix1]:on_hurt(self.hitboxes[fix2], fix2)
   end
 end
 
@@ -209,26 +207,24 @@ function Overworld:update(top, dt)
   end
 
   local i = 1
-  while i <= #self.sct do
-    local sct = self.sct[i]
-    sct:update(dt)
-
-    if sct:done() then
-      sct:deinit()
-      table.remove(self.sct, i)
+  while i <= #self.draw_timers do
+    self.draw_timers[i] = self.draw_timers[i] - dt
+    if self.draw_timers[i] <= 0 then
+      table.remove(self.draw_timers, i)
+      self:draw_card()
     else
       i = i + 1
     end
   end
 
   local i = 1
-  while i <= #self.attacks do
-    local atk = self.attacks[i]
-    atk:update(dt)
+  while i <= #self.particles do
+    local particle = self.particles[i]
+    particle:update(dt)
 
-    if atk:done() then
-      atk:deinit()
-      table.remove(self.attacks, i)
+    if particle:done() then
+      particle:deinit()
+      table.remove(self.particles, i)
     else
       i = i + 1
     end
@@ -242,30 +238,28 @@ function Overworld:update(top, dt)
     card:update()
   end
 
-  for i, card in ipairs(self.hand) do
-    local depth = 0
+  for i=1, HAND_SIZE do
+    local card = self.hand[i]
+    if card then
+      local depth = SELECTED_DEPTH
 
-    card.tx = (WIDTH / 2) - (HAND_SPACING / 2 * (#self.hand - 1)) + (HAND_SPACING * (i - 1))
-    card.ty = HEIGHT
-    if i == self.card_sel then
-      depth = SELECTED_DEPTH
-    else
-      depth = HAND_DEPTH
+      card.tx = (WIDTH / 2) - (HAND_SPACING / 2 * (HAND_SIZE - 1)) + (HAND_SPACING * (i - 1))
+      card.ty = HEIGHT
+
+      local angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * HAND_ANGLE)
+      card.tx = card.tx + math.cos(angle) * depth
+      card.ty = card.ty + math.sin(angle) * depth
+
+      card.angle = angle - math.pi / 2
+
+      if not card:castable() then
+        card.tfade = 1
+      else
+        card.tfade = 0
+      end
+
+      card:update()
     end
-
-    local angle = math.angle(card.x, card.y, WIDTH / 2, HEIGHT * HAND_ANGLE)
-    card.tx = card.tx + math.cos(angle) * depth
-    card.ty = card.ty + math.sin(angle) * depth
-
-    card.angle = angle - math.pi / 2
-
-    if not card:castable() then
-      card.tfade = 1
-    else
-      card.tfade = 0
-    end
-
-    card:update()
   end
 
   -- handle movement
@@ -326,8 +320,11 @@ function Overworld:draw(top)
     crystal:draw()
   end
 
-  for i, card in ipairs(self.hand) do
-    card:draw(card:usable(), card:castable())
+  for i=1, HAND_SIZE do
+    local card = self.hand[i]
+    if card then
+      card:draw(card:usable(), card:castable())
+    end
   end
 
   for i, card in ipairs(self.deck) do
@@ -338,12 +335,8 @@ function Overworld:draw(top)
     card:draw()
   end
 
-  for i, sct in ipairs(self.sct) do
-    sct:draw()
-  end
-
-  for i, atk in ipairs(self.attacks) do
-    atk:draw()
+  for i, particle in ipairs(self.particles) do
+    particle:draw()
   end
 
   local status_quad = love.graphics.newQuad(0, 0, 16, 16, 16, 16)
@@ -403,8 +396,10 @@ function Overworld:keypressed(top, key)
     [KEYBINDINGS.card9]=9,
   }
 
-  if keymap[key] ~= nil and keymap[key] <= #self.hand then
-    self.card_sel = keymap[key]
+  if keymap[key] ~= nil and keymap[key] <= HAND_SIZE then
+    local slot = keymap[key]
+    self:use_card(slot)
+
   elseif key == KEYBINDINGS.menu then
     ENGINE:push_state(Menu({
       {
@@ -440,58 +435,60 @@ function Overworld:keypressed(top, key)
 end
 
 function Overworld:draw_card()
-  if #self.hand == MAX_HAND_SIZE then
-    -- FIXME what happens if you overdraw?
-    return
-  end
-
   if #self.deck == 0 then
     -- FIXME what happens if you have no deck left?
     return
   end
 
+  local slot = nil
+
+  for i=1, HAND_SIZE do
+    if self.hand[i] == nil then
+      slot = i
+      break
+    end
+  end
+
+  if slot == nil then
+    -- FIXME what happens if you have no open slots?
+    return
+  end
+
   local card = table.remove(self.deck)
   card.tflip = 0
-  table.insert(self.hand, card)
-  if self.card_sel == 0 then
-    self.card_sel = 1
+  self.hand[slot] = card
+end
+
+function Overworld:use_card(slot)
+  local card = self.hand[slot]
+  if card and card:castable(self) then
+    card:cast(self.char)
+    self:discard_card(card)
   end
 end
 
 function Overworld:discard_card(card)
+  for i=1, HAND_SIZE do
+    if card == self.hand[i] then
+      self.hand[i] = nil
+      break
+    end
+  end
+
+  table.insert(self.draw_timers, DRAW_TIMER)
+
   card.angle = 0
   card.tx = 0
   card.ty = HEIGHT - (#self.discard + 1) * DECK_SPACING + DECK_DEPTH
   card.tfade = 0
 
-  for i, hand_card in ipairs(self.hand) do
-    if card == hand_card then
-      table.remove(self.hand, i)
-      break
-    end
-  end
-
-  if self.card_sel > #self.hand then
-    self.card_sel = #self.hand
-  end
-
   table.insert(self.discard, card)
 end
 
-function Overworld:use_card()
-  local card = self.hand[self.card_sel]
-  if card and card:castable(self) then
-    card:cast(self.char)
-    self:discard_card(card)
-    if self:ready_for_hand() then
-      self:draw_hand()
-    end
-  end
-end
-
 function Overworld:ready_for_hand()
-  for i, card in ipairs(self.hand) do
-    if card:usable(self) then
+  for i=1, HAND_SIZE do
+    local card = self.hand[i]
+    if card and card:usable(self) then
       return false
     end
   end
@@ -503,9 +500,11 @@ function Overworld:draw_hand()
   self.mana = self.max_mana
 
   -- discard hand
+  --[[
   while #self.hand > 0 do
     self:discard_card(self.hand[1])
   end
+  ]]
 
   -- reshuffle if we need to
   if #self.deck == 0 then
@@ -513,7 +512,7 @@ function Overworld:draw_hand()
   end
 
   -- draw a new hand
-  while #self.hand < MAX_HAND_SIZE do
+  for i=1, HAND_SIZE do
     self:draw_card()
   end
 end
@@ -536,43 +535,19 @@ end
 function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
-    --[[
-    local dist = math.sqrt((self.char.x - self.en.x)^2 + (self.char.y - self.en.y)^2)
-    local dir = math.angle(self.char.x, self.char.y, self.en.x, self.en.y)
-    if dist <= MELEE_RANGE then
-      self.en.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
-      self:add_sct(2, self.en.x, self.en.y + SCT_Y_OFFSET, SCT_DAMAGE)
-    end
-    ]]
-
     if self.char.lag <= 0 then
-      self:aim()
+      cast_db.slash(attack_db.rogue_aa)(self.char, self.char.x, self.char.y)
+
       self.char.sprite:set_anim("stand_" .. self.char.dir)
       self.char.lag = ATTACK_LAG
-      self:add_attack(Attack(self, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
+
+      self.mana = self.mana + MANA_PARTS / 5
     end
   end
 
   -- right
-  if button == 2 and #self.hand > 0 then
-    self:use_card()
+  if button == 2 then
   end
-end
-
-function Overworld:move_selection(dir)
-  self.card_sel = self.card_sel + dir
-
-  if self.card_sel == 0 then
-    self.card_sel = #self.hand
-  end
-
-  if self.card_sel > #self.hand then
-    self.card_sel = 1
-  end
-end
-
-function Overworld:wheelmoved(top, x, y)
-  self:move_selection(-y)
 end
 
 function Overworld:move(x, y)

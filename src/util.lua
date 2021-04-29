@@ -23,6 +23,10 @@ function s2p(v)
   return v / SCALE / CANVAS_SCALE
 end
 
+function choose(from)
+  return from[love.math.random(#from)]
+end
+
 
 DIR_TO_ANGLE = {
  left = math.pi * 4 / 4,

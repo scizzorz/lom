@@ -67,7 +67,7 @@ function Actor:init(state, size, sprite)
   self:update()
 end
 
-function Actor:hurt(atk)
+function Actor:on_hurt(atk)
 end
 
 function Actor:update(dt)

@@ -60,6 +60,7 @@ function love.draw()
 
   ENGINE:ctl("draw")
 
+  love.graphics.setColor(1, 1, 1, 1)
   love.graphics.print("fps " .. math.floor(fps + 0.5), 0, 0)
 
   love.graphics.setScissor()

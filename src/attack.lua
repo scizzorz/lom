@@ -2,8 +2,7 @@ require("conf")
 require("engine")
 require("gfx")
 require("util")
-
-Attack = Object:extend()
+require("particles")
 
 ATTACK_DURATION = 0.125
 ATTACK_LAG = 0.25
@@ -11,11 +10,60 @@ ATTACK_ARC = math.pi / 1
 ATTACK_SIZE = 4
 ATTACK_RANGE = 16
 
--- FIXME this needs to be generalized
-function Attack:init(state, x, y, angle)
-  -- physics
+Attack = Particle:extend()
+
+function Attack:init(state, effects)
   self.state = state
   self.world = state.world
+  self.effects = effects
+  self.elapsed = 0
+end
+
+function Attack:update(dt)
+  self.elapsed = self.elapsed + (dt or 0)
+end
+
+function Attack:on_hit(target, fix)
+  for i, effect in ipairs(self.effects) do
+    effect(self, target, fix)
+  end
+end
+
+function Attack:deinit()
+end
+
+function Attack:done()
+  return false
+end
+
+-- a piercing attack that only hits each hitbox once
+PiercingAttack = Attack:extend()
+
+-- FIXME this needs to be generalized
+function PiercingAttack:init(state, effects)
+  PiercingAttack.__super.init(self, state, effects)
+
+  self.collisions = {}
+end
+
+function PiercingAttack:on_hit(target, fix)
+  if self.collisions[fix] then
+    return
+  end
+
+  self.collisions[fix] = true
+
+  PiercingAttack.__super.on_hit(self, target, fix)
+end
+
+-- a slicing animation
+
+SlashAttack = PiercingAttack:extend()
+
+-- FIXME this needs to be generalized
+function SlashAttack:init(state, effects, x, y, angle)
+  SlashAttack.__super.init(self, state, effects)
+
   self.shape = love.physics.newCircleShape(0, 0, ATTACK_SIZE)
   self.body = love.physics.newBody(self.world, 0, 0, "static")
   self.body:setBullet(true)
@@ -27,79 +75,28 @@ function Attack:init(state, x, y, angle)
   self.x = x
   self.y = y
   self.angle = angle
-  self.elapsed = 0
 
   self:update()
-
-  self.collisions = {}
 end
 
-function Attack:update(dt)
-  dt = dt or 0
-  self.elapsed = self.elapsed + dt
+function SlashAttack:update(dt)
+  SlashAttack.__super.update(self, dt)
 
   local angle = self.angle - ATTACK_ARC / 2 + self.elapsed / ATTACK_DURATION * ATTACK_ARC
   self.body:setX(self.x + math.cos(angle) * ATTACK_RANGE)
   self.body:setY(self.y + math.sin(angle) * ATTACK_RANGE)
 end
 
-function Attack:hit(target, fix)
-  if self.collisions[fix] then
-    return
-  end
-
-  self.collisions[fix] = true
-  local dist = math.sqrt((self.x - target.x)^2 + (self.y - target.y)^2)
-  local dir = math.angle(self.x, self.y, target.x, target.y)
-
-  target.body:applyLinearImpulse(math.cos(dir) * MELEE_ATTACK_WEIGHT, math.sin(dir) * MELEE_ATTACK_WEIGHT)
-  self.state:add_sct(2, target.x, target.y + SCT_Y_OFFSET, SCT_DAMAGE)
-  self.state:add_attack(Slash(self.state, target.x, target.y))
-end
-
-function Attack:deinit()
+function SlashAttack:deinit()
   self.body:destroy()
   self.state:deregister_hitbox(self.fixture)
 end
 
-function Attack:done()
-  return self.elapsed > ATTACK_DURATION;
+function SlashAttack:done()
+  return self.elapsed > ATTACK_DURATION
 end
 
-function Attack:draw()
+function SlashAttack:draw()
   love.graphics.setColor(0, 0, 1, 0.5)
   love.graphics.circle("fill", S(self.body:getX()), S(self.body:getY()), S(self.shape:getRadius()))
-end
-
---
-
-SLASH_DURATION = 0.5
-SLASH_FADE_SPEED = 8
-
-Slash = Object:extend()
-
-function Slash:init(state, x, y)
-  self.fade = 1
-  self.tfade = 0
-  self.x = x
-  self.y = y
-
-  self.tex = load_texture("atk_slash")
-  self.quad = build_quad(atlas.slash.frameset, love.math.random(0, 7))
-end
-
-function Slash:update(dt)
-  self.fade = self.fade + (self.tfade - self.fade) / SLASH_FADE_SPEED
-end
-
-function Slash:done()
-  return self.fade <= 0.01
-end
-
-function Slash:deinit()
-end
-
-function Slash:draw()
-  love.graphics.setColor(1, 1, 1, self.fade)
-  love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), nil, SCALE, SCALE, 12.5, 12.5)
 end
