@@ -1,6 +1,7 @@
 require("attack")
 require("data")
 require("gfx")
+require("particles")
 require("sprite")
 require("util")
 require("world")
@@ -45,11 +46,8 @@ function Overworld:init()
     {100, 100, 125, 100, 125, 125, 100, 125},
   })
 
-  -- scrolling combat text
-  self.sct = {}
-
-  -- attacks
-  self.attacks = {}
+  -- particles (SCT, attacks, floaties, etc)
+  self.particles = {}
 
   -- collision
   self.hurtboxes = {}
@@ -106,11 +104,11 @@ function Overworld:init()
 end
 
 function Overworld:add_sct(...)
-  table.insert(self.sct, SCT(...))
+  table.insert(self.particles, SCT(...))
 end
 
 function Overworld:add_attack(atk)
-  table.insert(self.attacks, atk)
+  table.insert(self.particles, atk)
 end
 
 -- hurtboxes are offensive
@@ -220,26 +218,13 @@ function Overworld:update(top, dt)
   end
 
   local i = 1
-  while i <= #self.sct do
-    local sct = self.sct[i]
-    sct:update(dt)
+  while i <= #self.particles do
+    local particle = self.particles[i]
+    particle:update(dt)
 
-    if sct:done() then
-      sct:deinit()
-      table.remove(self.sct, i)
-    else
-      i = i + 1
-    end
-  end
-
-  local i = 1
-  while i <= #self.attacks do
-    local atk = self.attacks[i]
-    atk:update(dt)
-
-    if atk:done() then
-      atk:deinit()
-      table.remove(self.attacks, i)
+    if particle:done() then
+      particle:deinit()
+      table.remove(self.particles, i)
     else
       i = i + 1
     end
@@ -350,12 +335,8 @@ function Overworld:draw(top)
     card:draw()
   end
 
-  for i, sct in ipairs(self.sct) do
-    sct:draw()
-  end
-
-  for i, atk in ipairs(self.attacks) do
-    atk:draw()
+  for i, particle in ipairs(self.particles) do
+    particle:draw()
   end
 
   local status_quad = love.graphics.newQuad(0, 0, 16, 16, 16, 16)

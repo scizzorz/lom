@@ -2,6 +2,7 @@ require("conf")
 require("engine")
 require("gfx")
 require("util")
+require("particles")
 
 Attack = Object:extend()
 
@@ -69,37 +70,4 @@ end
 function Attack:draw()
   love.graphics.setColor(0, 0, 1, 0.5)
   love.graphics.circle("fill", S(self.body:getX()), S(self.body:getY()), S(self.shape:getRadius()))
-end
-
---
-
-SLASH_DURATION = 0.5
-SLASH_FADE_SPEED = 8
-
-Slash = Object:extend()
-
-function Slash:init(state, x, y)
-  self.fade = 1
-  self.tfade = 0
-  self.x = x
-  self.y = y
-
-  self.tex = load_texture("atk_slash")
-  self.quad = build_quad(atlas.slash.frameset, love.math.random(0, 7))
-end
-
-function Slash:update(dt)
-  self.fade = self.fade + (self.tfade - self.fade) / SLASH_FADE_SPEED
-end
-
-function Slash:done()
-  return self.fade <= 0.01
-end
-
-function Slash:deinit()
-end
-
-function Slash:draw()
-  love.graphics.setColor(1, 1, 1, self.fade)
-  love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), nil, SCALE, SCALE, 12.5, 12.5)
 end
