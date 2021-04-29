@@ -79,7 +79,7 @@ effect_db = {
 attack_db = {
   rogue_aa = {
     effect_db.chopped,
-    effect_db.damage(2),
+    effect_db.damage(3),
     effect_db.knockback(60),
   },
 
@@ -91,19 +91,24 @@ attack_db = {
   hemorrhage = {
     effect_db.chopped,
     effect_db.apply("bleed", 1, 1),
-    effect_db.damage(1),
+    effect_db.damage(2),
   },
 
   garrote = {
     effect_db.chopped,
     effect_db.apply("bleed", 5, 5),
-    effect_db.manaburn(4),
+    effect_db.manaburn(5),
   },
 
   ambush = {
     effect_db.chopped,
-    effect_db.damage(5),
+    effect_db.damage(7),
     effect_db.knockback(240),
+  },
+
+  shiv = {
+    effect_db.chopped,
+    effect_db.damage(1),
   },
 }
 
@@ -218,6 +223,7 @@ card_db = {
     name = "Shiv",
     art = "card_shiv",
     cost = 0,
+    cast = cast_db.slash(attack_db.shiv),
   },
 
   shiv = {
