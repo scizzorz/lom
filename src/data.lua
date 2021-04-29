@@ -226,7 +226,7 @@ card_db = {
     cast = cast_db.slash(attack_db.shiv),
   },
 
-  shiv = {
+  infected_wounds = {
     name = "Infected Wounds",
     art = "card_infected_wounds",
     cost = 5,
