@@ -133,14 +133,14 @@ end
 function Overworld:begin_contact(fix1, fix2, contact)
   -- fix1 is the offensive fixture
   if self.hitboxes[fix1] and self.hurtboxes[fix2] then
-    self.hitboxes[fix1]:hit(self.hurtboxes[fix2], fix2)
-    self.hurtboxes[fix2]:hurt(self.hitboxes[fix1], fix1)
+    self.hitboxes[fix1]:on_hit(self.hurtboxes[fix2], fix2)
+    self.hurtboxes[fix2]:on_hurt(self.hitboxes[fix1], fix1)
   end
 
   -- fix2 is the offensive fixture
   if self.hitboxes[fix2] and self.hurtboxes[fix1] then
-    self.hitboxes[fix2]:hit(self.hurtboxes[fix1], fix1)
-    self.hurtboxes[fix1]:hurt(self.hitboxes[fix2], fix2)
+    self.hitboxes[fix2]:on_hit(self.hurtboxes[fix1], fix1)
+    self.hurtboxes[fix1]:on_hurt(self.hitboxes[fix2], fix2)
   end
 end
 
@@ -539,7 +539,7 @@ function Overworld:mousepressed(top, x, y, button)
       self:aim()
       self.char.sprite:set_anim("stand_" .. self.char.dir)
       self.char.lag = ATTACK_LAG
-      self:add_attack(Attack(self, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
+      self:add_attack(SlashAttack(self, attack_db.rogue_aa.effects, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
 
       self.mana = self.mana + MANA_PARTS / 5
     end
