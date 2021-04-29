@@ -137,3 +137,30 @@ status_db = {
     kind = "debuff",
   },
 }
+
+effect_db = {
+  damage = function(amt)
+    return function(self, target, fix)
+      self.state:add_sct(amt, target.x, target.y + SCT_Y_OFFSET, SCT_DAMAGE)
+      self.state:add_attack(Slash(self.state, target.x, target.y))
+    end
+  end,
+
+  knockback = function(amt)
+    return function(self, target, fix)
+      local dist = math.sqrt((self.x - target.x)^2 + (self.y - target.y)^2)
+      local dir = math.angle(self.x, self.y, target.x, target.y)
+
+      target.body:applyLinearImpulse(math.cos(dir) * amt, math.sin(dir) * amt)
+    end
+  end,
+}
+
+attack_db = {
+  rogue_aa = {
+    effects = {
+      effect_db.damage(2),
+      effect_db.knockback(MELEE_ATTACK_WEIGHT),
+    },
+  },
+}
