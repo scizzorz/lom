@@ -107,8 +107,12 @@ function Overworld:add_sct(...)
   table.insert(self.particles, SCT(...))
 end
 
-function Overworld:add_attack(atk)
-  table.insert(self.particles, atk)
+function Overworld:add_particle(kind, ...)
+  table.insert(self.particles, kind(self, ...))
+end
+
+function Overworld:add_attack(kind, effects, ...)
+  table.insert(self.particles, kind(self, effects, ...))
 end
 
 -- hurtboxes are offensive
@@ -536,10 +540,10 @@ function Overworld:mousepressed(top, x, y, button)
   -- left
   if button == 1 then
     if self.char.lag <= 0 then
-      self:aim()
+      cast_db.slash(attack_db.rogue_aa)(self.char, self.char.x, self.char.y)
+
       self.char.sprite:set_anim("stand_" .. self.char.dir)
       self.char.lag = ATTACK_LAG
-      self:add_attack(SlashAttack(self, attack_db.rogue_aa.effects, self.char.x, self.char.y, DIR_TO_ANGLE[self.char.dir]))
 
       self.mana = self.mana + MANA_PARTS / 5
     end

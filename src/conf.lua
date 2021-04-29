@@ -16,11 +16,10 @@ ACTOR_LINEAR_DAMPING = 30
 PLAYER_SPEED = 8
 HAND_SIZE = 5
 DECK_SIZE = 25
-DRAW_TIMER = 30
+DRAW_TIMER = 8
 
 -- temp
 MELEE_RANGE = 25
-MELEE_ATTACK_WEIGHT = 60
 
 -- health config
 MAX_HEALTH = 100
@@ -47,11 +46,15 @@ SCT_BUFF = {r=0.7, g=0.5, b=0.2}
 SCT_DEBUFF = {r=0.2, g=0.7, b=0.5}
 SCT_DAMAGE = {r=0.7, g=0.2, b=0.2}
 SCT_HEAL = {r=0.2, g=0.7, b=0.2}
+SCT_MANA = {r=0.2, g=0.2, b=0.7}
+SCT_MANABURN = {r=0.7, g=0.2, b=0.7}
 SCT_COLORS = {
   buff=SCT_BUFF,
   debuff=SCT_DEBUFF,
   heal=SCT_HEAL,
   damage=SCT_DAMAGE,
+  mana=SCT_MANA,
+  manaburn=SCT_MANABURN,
 }
 
 -- menu cursor fade
