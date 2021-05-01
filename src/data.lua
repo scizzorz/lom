@@ -142,6 +142,18 @@ card_db = {
     cast = cast_db.slash(attack_db.hemorrhage),
   },
 
+  roll_the_bones = {
+    name = "Roll the Bones",
+    art = "card_roll_the_bones",
+    cost = 2,
+  },
+
+  envenom = {
+    name = "Envenom",
+    art = "card_envenom",
+    cost = 3,
+  },
+
   garrote = {
     name = "Garrote",
     art = "card_garrote",
@@ -203,7 +215,7 @@ card_db = {
 
   mindnumbing_poison = {
     name = "Mind-numbing Poison",
-    art = "card_blank",
+    art = "card_mind-numbing_poison",
     cost = 1,
     cast = function(caster, x, y)
       caster:apply("mindnumbing_poison_coating", 60)
