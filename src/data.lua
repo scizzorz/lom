@@ -15,31 +15,37 @@ status_db = {
   deadly_poison_coating = {
     name = "Deadly Poison",
     kind = "buff",
+    art = "status_deadly_poison",
   },
 
   instant_poison_coating = {
     name = "Instant Poison",
     kind = "buff",
+    art = "status_instant_poison",
   },
 
   mindnumbing_poison_coating = {
     name = "Mind-numbing Poison",
     kind = "buff",
+    art = "status_mind-numbing_poison",
   },
 
   slice_and_dice = {
     name = "Slice and Dice",
     kind = "buff",
+    art = "status_slice_and_dice",
   },
 
   bleed = {
     name = "Bleed",
     kind = "debuff",
+
   },
 
   deadly_poison = {
     name = "Deadly Poison",
     kind = "debuff",
+    art = "status_deadly_poison",
   },
 }
 
