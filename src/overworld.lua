@@ -351,7 +351,7 @@ function Overworld:draw(top)
       love.graphics.draw(tex, status_quad, S(sx), S(sy), 0, SCALE, SCALE)
 
       if v.duration then
-        draw_cd(1 - v.duration / v.max_duration, sx + 1, sy + 1, 14, 14, 0, 0, 0, 0.5)
+        draw_cd(1 - v.duration / v.max_duration, sx, sy, 16, 16, 0, 0, 0, 0.5)
       end
 
       sx = sx - 18
