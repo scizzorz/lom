@@ -12,7 +12,8 @@ ATTACK_RANGE = 16
 
 Attack = Particle:extend()
 
-function Attack:init(state, effects)
+function Attack:init(owner, state, effects)
+  self.owner = owner
   self.state = state
   self.world = state.world
   self.effects = effects
@@ -25,7 +26,7 @@ end
 
 function Attack:on_hit(target, fix)
   for i, effect in ipairs(self.effects) do
-    effect(self, target, fix)
+    effect(self, self.owner, target, fix)
   end
 end
 
@@ -40,8 +41,8 @@ end
 PiercingAttack = Attack:extend()
 
 -- FIXME this needs to be generalized
-function PiercingAttack:init(state, effects)
-  PiercingAttack.__super.init(self, state, effects)
+function PiercingAttack:init(...)
+  PiercingAttack.__super.init(self, ...)
 
   self.collisions = {}
 end
@@ -61,8 +62,8 @@ end
 SlashAttack = PiercingAttack:extend()
 
 -- FIXME this needs to be generalized
-function SlashAttack:init(state, effects, x, y, angle)
-  SlashAttack.__super.init(self, state, effects)
+function SlashAttack:init(owner, state, effects, x, y, angle)
+  SlashAttack.__super.init(self, owner, state, effects)
 
   self.shape = love.physics.newCircleShape(0, 0, ATTACK_SIZE)
   self.body = love.physics.newBody(self.world, 0, 0, "static")

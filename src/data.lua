@@ -39,7 +39,6 @@ status_db = {
   bleed = {
     name = "Bleed",
     kind = "debuff",
-
   },
 
   deadly_poison = {
@@ -51,19 +50,19 @@ status_db = {
 
 effect_db = {
   manaburn = function(amt)
-    return function(self, target, fix)
+    return function(self, caster, target, fix)
       self.state:add_sct(amt, target.x, target.y + SCT_Y_OFFSET, SCT_MANABURN)
     end
   end,
 
   damage = function(amt)
-    return function(self, target, fix)
+    return function(self, caster, target, fix)
       self.state:add_sct(amt, target.x, target.y + SCT_Y_OFFSET, SCT_DAMAGE)
     end
   end,
 
   knockback = function(amt)
-    return function(self, target, fix)
+    return function(self, caster, target, fix)
       local dist = math.sqrt((self.x - target.x)^2 + (self.y - target.y)^2)
       local dir = math.angle(self.x, self.y, target.x, target.y)
 
@@ -72,12 +71,12 @@ effect_db = {
   end,
 
   apply = function(status, duration, stacks)
-    return function(self, target, fix)
+    return function(self, caster, target, fix)
       target:apply(status, duration, stacks)
     end
   end,
 
-  chopped = function(self, target, fix)
+  chopped = function(self, caster, target, fix)
     self.state:add_particle(Slash, target.x, target.y)
   end
 }

@@ -124,7 +124,7 @@ function Overworld:add_particle(kind, ...)
 end
 
 function Overworld:add_attack(kind, effects, ...)
-  table.insert(self.particles, kind(self, effects, ...))
+  table.insert(self.particles, kind(self.char, self, effects, ...))
 end
 
 -- hurtboxes are offensive
