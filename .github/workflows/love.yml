@@ -47,7 +47,6 @@ jobs:
         tag_name: "${{ steps.get_version.outputs.VERSION }}"
         release_name: "${{ steps.get_version.outputs.VERSION }}"
         prerelease: true
-        draft: true
 
     - name: "Upload to GitHub"
       uses: "actions/upload-release-asset@v1.0.1"
