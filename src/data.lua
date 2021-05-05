@@ -124,6 +124,14 @@ cast_db = {
       OVERWORLD:add_attack(SlashAttack, effects, OVERWORLD.char.x, OVERWORLD.char.y, DIR_TO_ANGLE[OVERWORLD.char.dir])
     end
   end,
+
+  double_slash = function(effects)
+    return function(caster, x, y)
+      OVERWORLD:aim()
+      OVERWORLD:add_attack(SlashAttack, effects, OVERWORLD.char.x, OVERWORLD.char.y, DIR_TO_ANGLE[OVERWORLD.char.dir])
+      OVERWORLD:add_attack(SlashAttack, effects, OVERWORLD.char.x, OVERWORLD.char.y, DIR_TO_ANGLE[OVERWORLD.char.dir], -1)
+    end
+  end,
 }
 
 card_db = {
@@ -253,6 +261,7 @@ card_db = {
     name = "Mutilate",
     art = "card_mutilate",
     cost = 1,
+    cast = cast_db.double_slash(attack_db.rogue_aa),
   },
 
   rupture = {

@@ -62,7 +62,7 @@ end
 SlashAttack = PiercingAttack:extend()
 
 -- FIXME this needs to be generalized
-function SlashAttack:init(owner, state, effects, x, y, angle)
+function SlashAttack:init(owner, state, effects, x, y, angle, dir)
   SlashAttack.__super.init(self, owner, state, effects)
 
   self.shape = love.physics.newCircleShape(0, 0, ATTACK_SIZE)
@@ -73,6 +73,7 @@ function SlashAttack:init(owner, state, effects, x, y, angle)
 
   state:register_hitbox(self.fixture, self)
 
+  self.dir = dir or 1
   self.x = x
   self.y = y
   self.angle = angle
@@ -83,7 +84,7 @@ end
 function SlashAttack:update(dt)
   SlashAttack.__super.update(self, dt)
 
-  local angle = self.angle - ATTACK_ARC / 2 + self.elapsed / ATTACK_DURATION * ATTACK_ARC
+  local angle = self.angle - self.dir * ATTACK_ARC / 2 + self.dir * self.elapsed / ATTACK_DURATION * ATTACK_ARC
   self.body:setX(self.x + math.cos(angle) * ATTACK_RANGE)
   self.body:setY(self.y + math.sin(angle) * ATTACK_RANGE)
 end
