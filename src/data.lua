@@ -85,6 +85,13 @@ effect_db = {
       effect_db.damage(1)(self, caster, target, fix)
     end
   end,
+
+  envenom = function(self, caster, target, fix)
+    if caster.status.instant_poison_coating then
+      effect_db.damage(3)(self, caster, target, fix)
+      caster:purge("instant_poison_coating")
+    end
+  end,
 }
 
 attack_db = {
@@ -121,6 +128,11 @@ attack_db = {
   shiv = {
     effect_db.chopped,
     effect_db.damage(1),
+  },
+
+  envenom = {
+    effect_db.chopped,
+    effect_db.envenom,
   },
 }
 
@@ -172,6 +184,7 @@ card_db = {
     name = "Envenom",
     art = "card_envenom",
     cost = 3,
+    cast = cast_db.slash(attack_db.envenom),
   },
 
   garrote = {
