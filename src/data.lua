@@ -78,7 +78,13 @@ effect_db = {
 
   chopped = function(self, caster, target, fix)
     self.state:add_particle(Slash, target.x, target.y)
-  end
+  end,
+
+  poisons = function(self, caster, target, fix)
+    if caster.status.instant_poison_coating then
+      effect_db.damage(1)(self, caster, target, fix)
+    end
+  end,
 }
 
 attack_db = {
@@ -86,6 +92,7 @@ attack_db = {
     effect_db.chopped,
     effect_db.damage(3),
     effect_db.knockback(60),
+    effect_db.poisons,
   },
 
   lacerate = {
