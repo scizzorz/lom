@@ -44,6 +44,7 @@ function Overworld:init()
 
   -- particles (SCT, attacks, floaties, etc)
   self.particles = {}
+  self.sct = {}
 
   -- collision
   self.hurtboxes = {}
@@ -99,8 +100,23 @@ function Overworld:init()
   self:draw_hand()
 end
 
-function Overworld:add_sct(...)
-  table.insert(self.particles, SCT(...))
+function Overworld:add_sct(text, x, y, ...)
+  local new = SCT(text, x, y, ...)
+  while true do
+    local safe = true
+    for i, other in ipairs(self.sct) do
+      if new:overlaps(other) then
+        safe = false
+        new.y = new.y + 12
+        new.ty = new.ty + 12
+      end
+    end
+
+    if safe then
+      break
+    end
+  end
+  table.insert(self.sct, new)
 end
 
 function Overworld:add_particle(kind, ...)
@@ -217,18 +233,8 @@ function Overworld:update(top, dt)
     end
   end
 
-  local i = 1
-  while i <= #self.particles do
-    local particle = self.particles[i]
-    particle:update(dt)
-
-    if particle:done() then
-      particle:deinit()
-      table.remove(self.particles, i)
-    else
-      i = i + 1
-    end
-  end
+  self:update_particles("particles", dt)
+  self:update_particles("sct", dt)
 
   for i, card in ipairs(self.deck) do
     card:update(self)
@@ -310,6 +316,21 @@ function Overworld:update(top, dt)
   end
 end
 
+function Overworld:update_particles(field, dt)
+  local i = 1
+  while i <= #self[field] do
+    local particle = self[field][i]
+    particle:update(dt)
+
+    if particle:done() then
+      particle:deinit()
+      table.remove(self[field], i)
+    else
+      i = i + 1
+    end
+  end
+end
+
 function Overworld:draw(top)
   self.map:draw()
   self.char:draw()
@@ -337,6 +358,10 @@ function Overworld:draw(top)
 
   for i, particle in ipairs(self.particles) do
     particle:draw()
+  end
+
+  for i, sct in ipairs(self.sct) do
+    sct:draw()
   end
 
   local status_quad = love.graphics.newQuad(0, 0, 16, 16, 16, 16)

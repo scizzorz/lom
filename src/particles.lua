@@ -38,6 +38,24 @@ function SCT:update(dt)
   self.a = self.a + (self.ta - self.a) / SCT_SPEED
 end
 
+function SCT:box()
+  local x = self.x - 4 * #self.text
+  local w = 8 * #self.text
+  local y = self.y
+  local h = 10
+  return x, y, w, h
+end
+
+function SCT:overlaps(other)
+  local sx, sy, sw, sh = self:box()
+  local ox, oy, ow, oh = other:box()
+  return (
+    (sx + sw >= ox) and (ox + ow >= sx)
+    and
+    (sy + sh >= oy) and (oy + oh >= sy)
+  )
+end
+
 function SCT:done()
   return self.timer <= 0
 end
