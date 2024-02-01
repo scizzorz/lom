@@ -56,16 +56,16 @@ newName="$major.$minor.$patch"
 # update manifest
 sed -e "s/code=$curCode/code=$newCode/"\
     -e "s/name=\"$curName\"/name=\"$newName\"/"\
-    --in-place $MANIFEST
+    --in-place .bak $MANIFEST
 
 # stage, commit, tag
 echo "Bumped from $curCode -> $newCode"
 echo "Renamed from $curName -> $newName"
 echo "Tagging $newName"
 git add $MANIFEST
-git commit -m "version: Bump from $curCode/$curName -> $newCode/$newName"
-git tag -a "$newName" -m "Release $newCode/$newName"
+git commit -m "Bump from $curName-$curCode -> $newName-$newCode"
+git tag -a "v$newName" -m "Release $newName-$newCode"
+git tag -a "r$newCode" -m "Release $newName-$newCode"
 
-# package and rename zip
-pkg
-cp game.love game-${newName}.love
+./pkg
+cp game.love game-${newName}-${newCode}.love
