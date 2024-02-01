@@ -60,14 +60,17 @@ function Actor:init(state, size, sprite)
   -- state
   self.lag = 0
   self.status = {}
+  self.hurt_flash = 0
 
   self:update()
 end
 
 function Actor:on_hurt(atk)
+  self.hurt_flash = 1
 end
 
 function Actor:update(dt)
+  self.hurt_flash = tween(self.hurt_flash, 0, 10)
   dt = dt or 0
   self.x = self.body:getX()
   self.y = self.body:getY()
@@ -177,7 +180,7 @@ function Actor:draw()
   love.graphics.setColor(0, 0, 1, 0.5)
   love.graphics.circle("fill", self.body:getX(), self.body:getY(), self.shape:getRadius())
 
-  self.sprite:draw()
+  self.sprite:draw(1, 1 - self.hurt_flash, 1 - self.hurt_flash)
 end
 
 Behavior = Object:extend()

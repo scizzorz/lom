@@ -655,7 +655,6 @@ function Menu:draw()
   self.label:draw()
 
   for i, label in ipairs(self.option_labels) do
-    love.graphics.setColor(1 - label.fade, 1 - label.fade, 1 - label.fade)
-    label:draw(true)
+    label:draw(1 - label.fade, 1 - label.fade, 1 - label.fade)
   end
 end

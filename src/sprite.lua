@@ -48,10 +48,12 @@ function Sprite:set_anim(label)
   end
 end
 
-function Sprite:draw(no_color)
-  if not no_color then
-    love.graphics.setColor(1, 1, 1)
-  end
+function Sprite:draw(r, g, b)
+  -- no_color is used by the menu
+  r = r or 1
+  g = g or 1
+  b = b or 1
+  love.graphics.setColor(r, g, b)
 
   love.graphics.draw(
     self.tex, self.quad,

@@ -22,6 +22,14 @@ function choose(from)
   return from[love.math.random(#from)]
 end
 
+function tween(from, to, speed, tolerance)
+  from = from + (to - from) / (speed or 5)
+  if math.abs(from - to) <= (tolerance or 0.01) then
+    from = to
+  end
+  return from
+end
+
 
 DIR_TO_ANGLE = {
  left = math.pi * 4 / 4,

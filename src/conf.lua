@@ -3,7 +3,7 @@ function love.conf(t)
   t.window.title = "Heroes of Might & Mango"
   t.window.width = 1200
   t.window.height = 675
-  t.window.fullscreen = true
+  t.window.fullscreen = false
 end
 
 -- you can touch these
