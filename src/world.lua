@@ -28,7 +28,7 @@ end
 
 function Map:draw()
   love.graphics.setColor(1, 1, 1)
-  love.graphics.draw(self.tex, self.quad, S(0), S(0), 0, SCALE, SCALE)
+  love.graphics.draw(self.tex, self.quad, 0, 0)
 
   love.graphics.setColor(1, 0, 0, 0.5)
   for i, shape in ipairs(self.shapes) do
@@ -38,9 +38,6 @@ end
 
 function Map:draw_shape(shape)
   local points = {self.body:getWorldPoints(shape:getPoints())}
-  for k, v in ipairs(points) do
-    points[k] = S(v)
-  end
   love.graphics.polygon("fill", points)
 end
 
@@ -178,7 +175,7 @@ end
 
 function Actor:draw()
   love.graphics.setColor(0, 0, 1, 0.5)
-  love.graphics.circle("fill", S(self.body:getX()), S(self.body:getY()), S(self.shape:getRadius()))
+  love.graphics.circle("fill", self.body:getX(), self.body:getY(), self.shape:getRadius())
 
   self.sprite:draw()
 end

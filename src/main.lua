@@ -16,7 +16,7 @@ function love.load()
 
   if screen_aspect < GAME_ASPECT then
     -- less widescreen, means width is dominant and we need letterboxes
-    CANVAS_SCALE = screen_width / WIDTH / SCALE
+    CANVAS_SCALE = screen_width / WIDTH
     SCISSOR = {
       x=0,
       y=(screen_height - p2s(HEIGHT)) / 2,
@@ -25,7 +25,7 @@ function love.load()
     }
   else
     -- more widescreen, means height is dominant and we need pillarboxes
-    CANVAS_SCALE = screen_height / HEIGHT / SCALE
+    CANVAS_SCALE = screen_height / HEIGHT
     SCISSOR = {
       x=(screen_width - p2s(WIDTH)) / 2,
       y=0,
@@ -34,11 +34,10 @@ function love.load()
     }
   end
 
-  canvas = love.graphics.newCanvas(WIDTH * SCALE, HEIGHT * SCALE)
+  canvas = love.graphics.newCanvas(WIDTH, HEIGHT)
 
   print("window:  " .. screen_width .. " x " .. screen_height)
   print("canvas:  " .. WIDTH .. " x " .. HEIGHT)
-  print("scale:   " .. SCALE)
   print("c scale: " .. CANVAS_SCALE)
   print("scissor: " .. SCISSOR.width .. " x " .. SCISSOR.height .. " @ " .. SCISSOR.x .. ", " .. SCISSOR.y)
 

@@ -202,6 +202,9 @@ end
 
 function Overworld:update(top, dt)
   self.fade = self.fade + (self.tfade - self.fade) / TRANSITION_SPEED
+  if math.abs(self.fade - self.tfade) < 0.01 then
+    self.fade = self.tfade
+  end
 
   if not top then
     self.tfade = 0.5
@@ -373,7 +376,7 @@ function Overworld:draw(top)
       local tex = load_texture(status.art)
 
       love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(tex, status_quad, S(sx), S(sy), 0, SCALE, SCALE)
+      love.graphics.draw(tex, status_quad, sx, sy)
 
       if v.duration then
         draw_cd(1 - v.duration / v.max_duration, sx, sy, 16, 16, 0, 0, 0, 0.5)
@@ -393,14 +396,11 @@ function Overworld:draw(top)
 end
 
 function Overworld:draw_physics_circ(f)
-  love.graphics.circle("fill", S(f.body:getX()), S(f.body:getY()), S(f.shape:getRadius()))
+  love.graphics.circle("fill", f.body:getX(), f.body:getY(), f.shape:getRadius())
 end
 
 function Overworld:draw_physics_rect(f)
   local points = {f.body:getWorldPoints(f.shape:getPoints())}
-  for k, v in ipairs(points) do
-    points[k] = S(v)
-  end
   love.graphics.polygon("fill", points)
 end
 
@@ -437,7 +437,7 @@ function Overworld:keypressed(top, key)
       {
         atlas=atlas.menu_options,
         anim="options",
-        disabled=true,
+        disabled=false,
         call=function()
         end,
       },
@@ -587,11 +587,6 @@ function Menu:init(options)
   self.bg.ox = atlas.menu.frameset.tile_width / 2
   self.bg.x = (WIDTH) / 2
   self.bg.y = (HEIGHT - atlas.menu.frameset.tile_height) / 2
-
-  self.label = Sprite(atlas.menu_options)
-  self.label.ox = atlas.menu_options.frameset.tile_width / 2
-  self.label.x = self.bg.x + 5
-  self.label.y = self.bg.y
 
   self.label = Sprite(atlas.menu_options)
   self.label.ox = atlas.menu_options.frameset.tile_width / 2

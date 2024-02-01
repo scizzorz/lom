@@ -97,9 +97,8 @@ function draw_text(text, x, y)
 
       love.graphics.draw(
         tex, quad,
-        S(x), S(y),
-        angle,
-        SCALE, SCALE
+        x, y,
+        angle
       )
 
       x = x + 8
@@ -138,47 +137,47 @@ function draw_cd(cd, x, y, w, h, r, g, b, a)
   local vertices = {}
 
   -- center
-  table.insert(vertices, S(x + w / 2))
-  table.insert(vertices, S(y + h / 2))
+  table.insert(vertices, x + w / 2)
+  table.insert(vertices, y + h / 2)
 
   -- top middle
-  table.insert(vertices, S(x + w / 2))
-  table.insert(vertices, S(y))
+  table.insert(vertices, x + w / 2)
+  table.insert(vertices, y)
 
   if cd > 0.125 then
     -- top right corner
-    table.insert(vertices, S(x + w))
-    table.insert(vertices, S(y))
+    table.insert(vertices, x + w)
+    table.insert(vertices, y)
   end
 
   if cd > 0.375 then
     -- bottom right corner
-    table.insert(vertices, S(x + w))
-    table.insert(vertices, S(y + h))
+    table.insert(vertices, x + w)
+    table.insert(vertices, y + h)
   end
 
   if cd > 0.625 then
     -- bottom left corner
-    table.insert(vertices, S(x))
-    table.insert(vertices, S(y + h))
+    table.insert(vertices, x)
+    table.insert(vertices, y + h)
   end
 
   if cd > 0.875 then
     -- top left
-    table.insert(vertices, S(x))
-    table.insert(vertices, S(y))
+    table.insert(vertices, x)
+    table.insert(vertices, y)
   end
 
   -- cooldown point
-  table.insert(vertices, S(cx))
-  table.insert(vertices, S(cy))
+  table.insert(vertices, cx)
+  table.insert(vertices, cy)
 
   love.graphics.setColor(r or 1, g or 1, b or 1, a or 0.5)
   love.graphics.polygon("fill", vertices)
 
   love.graphics.setColor(1 - r, 1 - g, 1 - b, 1 - a)
   love.graphics.setLineWidth(2)
-  love.graphics.line(S(x + w / 2), S(y + w / 2), S(cx), S(cy))
+  love.graphics.line(x + w / 2, y + w / 2, cx, cy)
 end
 
 -- the slash icon that appears on the enemy after taking a hit
@@ -211,5 +210,5 @@ end
 
 function Slash:draw()
   love.graphics.setColor(1, 1, 1, self.fade)
-  love.graphics.draw(self.tex, self.quad, S(self.x), S(self.y), nil, SCALE, SCALE, 12.5, 12.5)
+  love.graphics.draw(self.tex, self.quad, self.x, self.y, nil, nil, nil, 12.5, 12.5)
 end

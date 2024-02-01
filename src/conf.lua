@@ -1,5 +1,5 @@
 function love.conf(t)
-  t.version = "11.3"
+  t.version = "11.5"
   t.window.title = "Heroes of Might & Mango"
   t.window.width = 1200
   t.window.height = 675
@@ -114,6 +114,5 @@ KEYBINDINGS = {
 }
 
 -- don't touch these
-SCALE = 5
 CANVAS_SCALE = 1
 GAME_ASPECT = WIDTH / HEIGHT

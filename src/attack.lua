@@ -99,6 +99,6 @@ function SlashAttack:done()
 end
 
 function SlashAttack:draw()
-  love.graphics.setColor(0, 0, 1, 0.5)
-  love.graphics.circle("fill", S(self.body:getX()), S(self.body:getY()), S(self.shape:getRadius()))
+  love.graphics.setColor(1, 1, 0, 0.5)
+  love.graphics.circle("fill", self.body:getX(), self.body:getY(), self.shape:getRadius())
 end

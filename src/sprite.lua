@@ -55,9 +55,9 @@ function Sprite:draw(no_color)
 
   love.graphics.draw(
     self.tex, self.quad,
-    S(self.x), S(self.y),
+    self.x, self.y,
     self.angle,
-    SCALE * self.sx, SCALE * self.sy,
+    self.sx, self.sy,
     self.ox, self.oy
   )
 end
@@ -91,14 +91,14 @@ end
 function HealthBar:draw()
   -- draw border
   love.graphics.setColor(1, 1, 1)
-  love.graphics.draw(self.border_tex, self.border_quad, S(self.x), S(self.y), self.angle, SCALE, SCALE, self.ox, self.oy)
+  love.graphics.draw(self.border_tex, self.border_quad, self.x, self.y, self.angle, nil, nil, self.ox, self.oy)
 
   -- draw fill if we have some value
   if self.cur > 0 then
     love.graphics.setColor(self.cur / self.max * 0.6 + 0.4, 0.1, 0.1)
     local width = math.max(1, math.floor(self.cur / self.max * 66))
     local fill_quad = love.graphics.newQuad(0, 0, width, 10, 66, 10)
-    love.graphics.draw(self.fill_tex, fill_quad, S(self.x + 12), S(self.y + 3), self.angle, SCALE, SCALE, self.ox, self.oy)
+    love.graphics.draw(self.fill_tex, fill_quad, self.x + 12, self.y + 3, self.angle, nil, nil, self.ox, self.oy)
   end
 end
 
@@ -164,9 +164,9 @@ function Card:draw(usable, castable)
   if self.flip > 0.5 then
     love.graphics.draw(
       self.back, CARD_QUAD,
-      S(self.x), S(self.y),
+      self.x, self.y,
       self.angle,
-      SCALE * 2 * (self.flip - 0.5), SCALE,
+      2 * (self.flip - 0.5), nil,
       self.ox, self.oy
     )
 
@@ -178,18 +178,18 @@ function Card:draw(usable, castable)
     -- draw card art
     love.graphics.draw(
       self.art, ART_QUAD,
-      S(self.x), S(self.y),
+      self.x, self.y,
       self.angle,
-      SCALE * 2 * (0.5 - self.flip), SCALE,
+      2 * (0.5 - self.flip), nil,
       self.ox - 1, self.oy - 1
     )
 
     -- draw card border
     love.graphics.draw(
       self.border, CARD_QUAD,
-      S(self.x), S(self.y),
+      self.x, self.y,
       self.angle,
-      SCALE * 2 * (0.5 - self.flip), SCALE,
+      2 * (0.5 - self.flip), nil,
       self.ox, self.oy
     )
 
@@ -210,9 +210,9 @@ function Card:draw(usable, castable)
     -- sqrt(13^2 + 8.5^2) = 15.53
     love.graphics.draw(
       self.digits, self.cost_quad,
-      S(self.x + 15.53 * math.cos(self.angle - 2.15)), S(self.y + 15.53 * math.sin(self.angle - 2.15)),
+      self.x + 15.53 * math.cos(self.angle - 2.15), self.y + 15.53 * math.sin(self.angle - 2.15),
       self.angle,
-      SCALE * 2 * (0.5 - self.flip), SCALE,
+      2 * (0.5 - self.flip), nil,
       3.5, 5
     )
   end
