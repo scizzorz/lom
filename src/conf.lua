@@ -4,6 +4,7 @@ function love.conf(t)
   t.window.width = 1200
   t.window.height = 675
   t.window.fullscreen = false
+  t.window.resizable = true
 end
 
 -- you can touch these

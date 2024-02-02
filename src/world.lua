@@ -180,7 +180,7 @@ function Actor:draw()
   love.graphics.setColor(0, 0, 1, 0.5)
   love.graphics.circle("fill", self.body:getX(), self.body:getY(), self.shape:getRadius())
 
-  self.sprite:draw(1, 1 - self.hurt_flash, 1 - self.hurt_flash)
+  self.sprite:draw(1 + self.hurt_flash, 1 - self.hurt_flash, 1 - self.hurt_flash)
 end
 
 Behavior = Object:extend()

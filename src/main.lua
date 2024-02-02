@@ -8,10 +8,7 @@ require("world")
 
 local fps = 0
 
-function love.load()
-  print("love.load")
-
-  local screen_width, screen_height = love.graphics.getDimensions()
+function love.resize(screen_width, screen_height)
   local screen_aspect = screen_width / screen_height
 
   if screen_aspect < GAME_ASPECT then
@@ -46,6 +43,13 @@ function love.load()
 
   love.physics.setMeter(25)
 
+end
+
+function love.load()
+  print("love.load")
+
+  local screen_width, screen_height = love.graphics.getDimensions()
+  love.resize(screen_width, screen_height)
   ENGINE = Engine()
   OVERWORLD = Overworld()
   ENGINE:push_state(OVERWORLD)
