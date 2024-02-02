@@ -2,64 +2,37 @@ name: "Love 2D"
 
 on: ["push"]
 
-# sucks that it's so hard to self-host this CI stuff because of version pinning
-# during releases, since Mold was kinda designed to make CI jobs a lot easier
-# to write... oh well!
-
 jobs:
   build:
     name: "Build"
     runs-on: "ubuntu-latest"
+    if: "startsWith(github.ref, 'refs/tags/v')"
+
     steps:
-    - uses: "actions/checkout@v2"
-
-    - name: "Package"
-      run: "bash pkg"
-
-    - name: "Upload artifact"
-      uses: "actions/upload-artifact@v1"
-      with:
-        name: "game"
-        path: "game.love"
-
-  release:
-    name: "Publish Release"
-    runs-on: "ubuntu-latest"
-    if: "startsWith(github.ref, 'refs/tags')"
-    needs: ["build"]
-    steps:
+    - uses: "actions/checkout@v4"
 
     - name: "Get version"
       id: "get_version"
       run: 'echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}'
 
-    - name: "Download artifacts"
-      uses: "actions/download-artifact@v1"
-      with:
-        name: "game"
+    - name: "Build package"
+      run: "bash pkg"
+
+    - name: "Name package"
+      run: |
+        export GAME=${{ format('game-{0}.love', steps.get_version.outputs.VERSION) }}
+        mv game.love $GAME
 
     - name: "Create release"
-      uses: "actions/create-release@v1"
+      uses: "softprops/action-gh-release@v1"
       id: "create_release"
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"  # do I need this?
       with:
+        name: "${{ steps.get_version.outputs.VERSION }}"
         tag_name: "${{ steps.get_version.outputs.VERSION }}"
-        release_name: "${{ steps.get_version.outputs.VERSION }}"
+        files: "game-${{ steps.get_version.outputs.VERSION }}.love"
         prerelease: true
-
-    - name: "Upload to GitHub"
-      uses: "actions/upload-release-asset@v1.0.1"
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      with:
-        upload_url: "${{ steps.create_release.outputs.upload_url }}"
-        asset_path: "game/game.love"
-        asset_name: "${{ format('game-{0}.love', steps.get_version.outputs.VERSION) }}"
-        asset_content_type: "application/octet-stream"
 
     - name: "Upload to Discord"
       run: |
         export GAME=${{ format('game-{0}.love', steps.get_version.outputs.VERSION) }}
-        mv game/game.love $GAME
         curl -F file=@$GAME ${{ secrets.DISCORD_WEBHOOK }}
